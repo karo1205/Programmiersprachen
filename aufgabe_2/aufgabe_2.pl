@@ -8,22 +8,21 @@ my @fileContent;
 sub proccedArguments() {
   if(@ARGV > 0 && $ARGV[0] =~ /conf$/) {
     $confFile = $ARGV[0];
-  }  
+  } else {
+    die "You must define a config file!\n";
+  }
 }
 
 sub openFile() {
   if(defined $confFile && -e $confFile) {
     open FILE, "<$confFile", or die &!;
-  } 
-  if(defined $confFile) {
+  } else {
     print "Cannot find configuration file\n";
     die $!;
-  } else {
-    open FILE, "<standard.conf", or die &!;
   }
 
-  @fileContent = <FILE>;
-#  while (<FILE>) { print $_; }
+#  @fileContent = <FILE>;
+  while (<FILE>) { print $_; }
   
   close(FILE);
 }
@@ -34,7 +33,7 @@ sub parseFile() {
 
 &proccedArguments();
 &openFile();
-&parseFile();
+#&parseFile();
 
 foreach my $arg (@ARGV) {
     print $arg, "\n";
