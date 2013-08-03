@@ -3,7 +3,6 @@ use strict;
 use warnings;
 
 my $confFile;
-my @fileContent;
 
 sub proccedArguments() {
   if(@ARGV > 0 && $ARGV[0] =~ /conf$/) {
@@ -21,14 +20,35 @@ sub openFile() {
     die $!;
   }
 
-#  @fileContent = <FILE>;
-  while (<FILE>) { print $_; }
+  while (<FILE>) { &evalInput($_) }
   
   close(FILE);
 }
 
-sub parseFile() {
-  while (@fileContent) { print $_; }
+sub evalInput() {
+  my @split = split(' ', $_[0]);
+  
+  if(defined $split[0]) {
+    if($split[0] =~ /^var$/) {
+      &executeParam(@split);
+    } else {
+      &executeCmd(@split);
+    }
+  }
+  
+  
+}
+
+sub executeParam() {
+  
+}
+
+sub executeCmd() {
+  foreach my $value (@_) {
+    my $status = system($value);
+    return $status;
+  }
+   
 }
 
 &proccedArguments();
