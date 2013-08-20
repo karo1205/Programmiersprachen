@@ -3,13 +3,23 @@ use strict;
 use warnings;
 
 my $confFile;
-my %parameters = ();
+my %parameters;
 
 sub proccedArguments() {
-  if(@ARGV > 0 && $ARGV[0] =~ /conf$/) {
-    $confFile = $ARGV[0];
-  } else {
-    die "You must define a config file!\n";
+  my $index = 0;
+  foreach my $argument (@ARGV) {
+    if($index == 0) {
+      if($ARGV[0] =~ /conf$/) {
+	$confFile = $ARGV[0];
+	$index++;
+      } else {
+	die "You must define a config file!\n";
+      }
+    } else {
+      my $key = "cmdarg" . $index;
+      $parameters{$key} = $argument;
+      $index++;
+    }
   }
 }
 
@@ -29,7 +39,7 @@ sub openFile() {
 }
 
 sub evalInput(@) {
-  my @split = split(' ', $_[0]);
+  my @split = split(" ", $_[0]);
   
   if(defined $split[0]) {
     if($split[0] =~ /^var$/) {
@@ -48,50 +58,35 @@ sub executeParam(@) {
   $parameters{$_[1]} = $_[3];
 }
 
-sub replaceWithParam(@) {
+sub replaceWithParam($) {
   foreach my $key (keys(%parameters)) {
     if($key eq $_[0]) {
       return $parameters{$key};
-    } else {
-      return $_;
     }
   }
+  return $_[0];
 }
 
 sub executeCmd(@) {
   my $index = 0;
   my $command;
   my @param;
-  my $value;
-  foreach $value (@_) {
-    if($index eq 0) {
-      $command = $value;
-      $index++;
-    } else {
-      my $p = &replaceWithParam($value);
-      print $p;
-      push(@param, $p);
-      $index++;
-    }
+
+  print "Split: " . @_ . "\n";
+  foreach my $value (@_) {
+    my $replaced = &replaceWithParam($value);
+    push(@param, $replaced);
   }
   
-  foreach $value (@param) {
-    $command = $command . " " . $value;
-  }
-  
-  my $result = `$command 2>&1`;
+  my $exec = join(" ", @param);
+  my $result = `$exec 2>&1`;
     if($? < 0) {
       print "Executing command failed\n";
     } else {
-      print $result;
+      print "result: " . $result;
       return $0;
-    }
-   
+    } 
 }
 
 &proccedArguments();
 &openFile();
-
-# foreach my $arg (@ARGV) {
-#     print $arg, "\n";
-# }
