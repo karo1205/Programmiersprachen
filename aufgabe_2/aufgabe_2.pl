@@ -23,7 +23,7 @@ sub proccedArguments() {
   }
 }
 
-sub openFile() {
+sub execCmds() {
   if(defined $confFile && -e $confFile) {
     open FILE, "<$confFile", or die &!;
   } else {
@@ -89,4 +89,4 @@ sub executeCmd(@) {
 }
 
 &proccedArguments();
-&openFile();
+&execCmds();
