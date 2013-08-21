@@ -1,5 +1,7 @@
 module Main(main) where
 
+import System.Exit
+
 type ID = Int
 type TrainID = Int
 type StationID = Int
@@ -26,6 +28,7 @@ handleInput (ts,ss) = do
 		"?" -> usage
 		"print_stations" -> printStations ss
 		"print_trains" -> printTrains ts ss
+		"quit" -> quit
 		_ -> usage
 	handleInput (ts,ss)
 
@@ -36,8 +39,12 @@ loadData = do d <- readFile "data.txt"
 usage :: IO()
 usage = do
 	putStrLn "help/?: Print this text"
-	putStrLn "print_stations: display list of stations"
-	putStrLn "print_trains: display list of trains"
+	putStrLn "print_stations: Display list of stations"
+	putStrLn "print_trains: Display list of trains"
+	putStrLn "quit: Quit program"
+
+quit :: IO()
+quit = exitSuccess
 
 printStations :: [Station] -> IO()
 printStations [] = putStr ""
