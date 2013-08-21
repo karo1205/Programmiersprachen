@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 my $confFile;
+my @fileLines;
 my %parameters;
 
 sub proccedArguments() {
@@ -23,19 +24,25 @@ sub proccedArguments() {
   }
 }
 
-sub execCmds() {
+sub readFile() {
   if(defined $confFile && -e $confFile) {
     open FILE, "<$confFile", or die &!;
+    @fileLines = <FILE>;
+    close FILE;
   } else {
     print "Cannot find configuration file\n";
     die $!;
   }
+}
 
-  while (<FILE>) {
-    &evalInput($_);
-  }
+sub validateConf() {
   
-  close(FILE);
+}
+
+sub execCmds() {
+  foreach my $line (@fileLines) {
+    &evalInput($line);
+  }
 }
 
 sub evalInput(@) {
@@ -72,7 +79,6 @@ sub executeCmd(@) {
   my $command;
   my @param;
 
-  print "Split: " . @_ . "\n";
   foreach my $value (@_) {
     my $replaced = &replaceWithParam($value);
     push(@param, $replaced);
@@ -89,4 +95,6 @@ sub executeCmd(@) {
 }
 
 &proccedArguments();
+&readFile();
+&validateConf();
 &execCmds();
