@@ -4,7 +4,12 @@ use warnings;
 
 my $confFile;
 my @fileLines;
+my @actionStack = ("EMPTY");
 my %parameters;
+
+sub clearActionStack() {
+  @actionStack = ("EMPTY");
+}
 
 sub proccedArguments() {
   my $index = 0;
@@ -36,7 +41,23 @@ sub readFile() {
 }
 
 sub validateConf() {
-  
+  my $value;
+  foreach my $line (@fileLines) {
+    if($line =~ /^alternative:$/ || $line =~ /^sequence:$/) {
+      push(@actionStack, $line);
+    } elsif($line =~ /^:alternative$/ || $line =~ /^:sequence$/) {
+      $value = pop(@actionStack);
+      if($line =~ /^:sequence$/ && $value !~ /^sequence:$/) {
+	die "Config file is not valid. False usage of action blocks";
+      } elsif($line =~ /^:alternative$/ && $value !~ /^alternative:$/) {
+	die "Config file is not valid. False usage of action blocks";
+      }
+    }
+  }
+  $value = pop(@actionStack);
+  if($value ne "EMPTY") {
+    die "Config file is not valid. Action block is open";
+  }
 }
 
 sub execCmds() {
@@ -55,6 +76,10 @@ sub evalInput(@) {
       
     } elsif($split[0] =~ /^sequence:$/) {
       
+    } elsif($split[0] =~ /^:alternative$/) {
+      
+    } elsif($split[0] =~ /^:sequence$/) {
+    
     } else {
       &executeCmd(@split);
     }
