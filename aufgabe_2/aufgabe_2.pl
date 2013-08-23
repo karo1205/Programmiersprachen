@@ -6,10 +6,7 @@ my $confFile;
 my @fileLines;
 my @actionStack = ("EMPTY");
 my %parameters;
-
-sub clearActionStack() {
-  @actionStack = ("EMPTY");
-}
+my $returnValue;
 
 sub proccedArguments() {
   my $index = 0;
@@ -61,8 +58,13 @@ sub validateConf() {
 }
 
 sub execCmds() {
+  @actionStack = ("EMPTY");
   foreach my $line (@fileLines) {
     &evalInput($line);
+  }
+  my $value = pop(@actionStack);
+  if($value ne "EMPTY") {
+    die "Something goes wrong";
   }
 }
 
@@ -73,13 +75,15 @@ sub evalInput(@) {
     if($split[0] =~ /^var$/) {
       &executeParam(@split);
     } elsif($split[0] =~ /^alternative:$/) {
-      
+      push(@actionStack, $split[0]);
+      $returnValue = 1;
     } elsif($split[0] =~ /^sequence:$/) {
-      
+      push(@actionStack, $split[0]);
+      $returnValue = 0;
     } elsif($split[0] =~ /^:alternative$/) {
-      
+      pop(@actionStack);
     } elsif($split[0] =~ /^:sequence$/) {
-    
+      pop(@actionStack);
     } else {
       &executeCmd(@split);
     }
@@ -103,20 +107,24 @@ sub executeCmd(@) {
   my $index = 0;
   my $command;
   my @param;
+  my $lastAction = $actionStack[$#actionStack];
 
-  foreach my $value (@_) {
-    my $replaced = &replaceWithParam($value);
-    push(@param, $replaced);
-  }
+  if($lastAction eq "EMPTY" || ($lastAction eq "sequence:" && $returnValue == 0) || ($lastAction eq "alternative:" && $returnValue != 0)) {
+    foreach my $value (@_) {
+      my $replaced = &replaceWithParam($value);
+      push(@param, $replaced);
+    }
   
-  my $exec = join(" ", @param);
-  my $result = `$exec 2>&1`;
-    if($? < 0) {
+    my $exec = join(" ", @param);
+    my $result = `$exec 2>&1`;
+    $returnValue = $?;
+    if($returnValue < 0) {
       print "Executing command failed\n";
     } else {
-      print "result: " . $result;
+      print "result: " . $result . "\n";
       return $0;
     } 
+  }
 }
 
 &proccedArguments();
