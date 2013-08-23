@@ -91,7 +91,7 @@ sub evalInput(@) {
 }
 
 sub executeParam(@) {
-  $parameters{$_[1]} = $_[3];
+  $parameters{$_[1]} = replaceWithParam($_[3]);
 }
 
 sub replaceWithParam($) {
