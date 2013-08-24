@@ -6,6 +6,7 @@ my $confFile;
 my @fileLines;
 my @actionStack = ("EMPTY");
 my %parameters;
+my %quantityParameters;
 my $returnValue;
 
 sub proccedArguments() {
@@ -19,9 +20,16 @@ sub proccedArguments() {
 	die "You must define a config file!\n";
       }
     } else {
-      my $key = "cmdarg" . $index;
-      $parameters{$key} = $argument;
-      $index++;
+      if($argument =~ /^\[/) {
+	my $key = "cmdarg" . $index . "[]";
+	my @par = &removeBraces($argument);
+	$quantityParameters{$key} = \@par;
+	$index++;
+      } else {
+	my $key = "cmdarg" . $index;
+	$parameters{$key} = $argument;
+	$index++;
+      }
     }
   }
 }
@@ -73,7 +81,11 @@ sub evalInput(@) {
   
   if(defined $split[0]) {
     if($split[0] =~ /^var$/) {
-      &executeParam(@split);
+      if($split[1] =~ /\[\]$/) {
+	&executeMParam($_[0]);
+      } else {
+	&executeParam(@split);
+      }
     } elsif($split[0] =~ /^alternative:$/) {
       push(@actionStack, $split[0]);
       $returnValue = 1;
@@ -85,13 +97,47 @@ sub evalInput(@) {
     } elsif($split[0] =~ /^:sequence$/) {
       pop(@actionStack);
     } else {
-      &executeCmd(@split);
+      if($_[0] =~ /\[\]/) {
+	&executeMCmd($_[0]);
+      } else {
+	&executeCmd(@split);
+      }
     }
   }
 }
 
 sub executeParam(@) {
   $parameters{$_[1]} = replaceWithParam($_[3]);
+
+}
+
+sub executeMParam(@) {
+  my @splitEqual = split("=", $_[0]);
+  my @split1 = split(" ", $splitEqual[0]);
+  my @split2 = &removeBraces($splitEqual[1]);
+  my $name = $split1[1];
+  $quantityParameters{$name} = \@split2;
+  
+#   my $ref = $quantityParameters{$name};
+#   foreach my $value (@$ref) {
+#     print $value;
+#   }
+}
+
+sub existMParam($) {
+  foreach my $key (keys(%parameters)) {
+    if($key eq $_[0]) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+sub removeBraces(@) {
+  my @split = split(/\[/, $_[0]);
+  @split = split(/\]/, $split[1]);
+  @split = split(" ", $split[0]);
+  return @split;
 }
 
 sub replaceWithParam($) {
@@ -104,8 +150,6 @@ sub replaceWithParam($) {
 }
 
 sub executeCmd(@) {
-  my $index = 0;
-  my $command;
   my @param;
   my $lastAction = $actionStack[$#actionStack];
 
@@ -120,12 +164,29 @@ sub executeCmd(@) {
     $returnValue = $?;
     if($returnValue < 0) {
       print "Executing command failed\n";
+      return 1;
     } else {
       print "result: " . $result . "\n";
-      return $0;
+      return 0;
     } 
   }
 }
+
+sub executeMCmd(@) {
+  my @split = split(" ", $_[0]);
+  foreach my $key (keys(%quantityParameters)) {
+    if($key eq $split[1]) {
+      my $val = 0;
+      my $ref = $quantityParameters{$key};
+      foreach my $value (@$ref) {
+	if($val != 0) {return;}
+	my @tmp = ($split[0], $value);
+	$val = &executeCmd(@tmp);
+      }
+    }
+  }
+}    
+
 
 &proccedArguments();
 &readFile();
