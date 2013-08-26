@@ -117,11 +117,6 @@ sub executeMParam(@) {
   my @split2 = &removeBraces($splitEqual[1]);
   my $name = $split1[1];
   $quantityParameters{$name} = \@split2;
-  
-#   my $ref = $quantityParameters{$name};
-#   foreach my $value (@$ref) {
-#     print $value;
-#   }
 }
 
 sub existMParam($) {
@@ -156,10 +151,13 @@ sub executeCmd(@) {
   if($lastAction eq "EMPTY" || ($lastAction eq "sequence:" && $returnValue == 0) || ($lastAction eq "alternative:" && $returnValue != 0)) {
     foreach my $value (@_) {
       my $replaced = &replaceWithParam($value);
+      chomp($replaced);
       push(@param, $replaced);
     }
   
     my $exec = join(" ", @param);
+    $exec = "/bin/bash -c '" . $exec . "'";
+    print "Executing: " . $exec . "\n";
     my $result = `$exec 2>&1`;
     $returnValue = $?;
     if($returnValue < 0) {
@@ -186,7 +184,6 @@ sub executeMCmd(@) {
     }
   }
 }    
-
 
 &proccedArguments();
 &readFile();
