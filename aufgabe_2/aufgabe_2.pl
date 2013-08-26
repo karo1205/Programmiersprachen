@@ -150,9 +150,14 @@ sub executeCmd(@) {
 
   if($lastAction eq "EMPTY" || ($lastAction eq "sequence:" && $returnValue == 0) || ($lastAction eq "alternative:" && $returnValue != 0)) {
     foreach my $value (@_) {
-      my $replaced = &replaceWithParam($value);
-      chomp($replaced);
-      push(@param, $replaced);
+      my @slashSplit = split("/", $value);
+      my @tmpParam;
+      foreach my $val (@slashSplit) {
+	my $replaced = &replaceWithParam($val);
+	push(@tmpParam, $replaced);
+      }
+      my $tmp = join("/", @tmpParam);
+      push(@param, $tmp);
     }
   
     my $exec = join(" ", @param);
