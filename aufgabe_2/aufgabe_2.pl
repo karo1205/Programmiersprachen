@@ -166,10 +166,10 @@ sub executeCmd(@) {
     my $result = `$exec 2>&1`;
     $returnValue = $?;
     if($returnValue < 0) {
-      print "Executing command failed\n";
+      print "Executing command failed: " . $result . "\n";
       return 1;
     } else {
-      print "result: " . $result . "\n";
+      print "Success command execution: \n" . $result . "\n";
       return 0;
     } 
   }
