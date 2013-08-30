@@ -87,11 +87,25 @@ sub evalInput(@) {
 	&executeParam(@split);
       }
     } elsif($split[0] =~ /^alternative:$/) {
+      my $lastAction = $actionStack[$#actionStack];
+      if($lastAction eq "sequence:" && $returnValue == 0) {
+	$returnValue = 1;
+      } elsif($lastAction eq "sequence:" && $returnValue != 0) {
+	$returnValue = 0;
+      } elsif($lastAction eq "EMPTY") {
+	$returnValue = 1;
+      }
       push(@actionStack, $split[0]);
-      $returnValue = 1;
     } elsif($split[0] =~ /^sequence:$/) {
+      my $lastAction = $actionStack[$#actionStack];
+      if($lastAction eq "alternative:" && $returnValue != 0) {
+	$returnValue = 0;
+      } elsif($lastAction eq "alternative:" && $returnValue == 0) {
+	$returnValue = 1;
+      } elsif($lastAction eq "EMPTY") {
+	$returnValue = 0;
+      }
       push(@actionStack, $split[0]);
-      $returnValue = 0;
     } elsif($split[0] =~ /^:alternative$/) {
       pop(@actionStack);
     } elsif($split[0] =~ /^:sequence$/) {
@@ -107,7 +121,14 @@ sub evalInput(@) {
 }
 
 sub executeParam(@) {
-  $parameters{$_[1]} = replaceWithParam($_[3]);
+  my @split = split("/", $_[3]);
+  my @tmpParam;
+  foreach my $value (@split) {
+    my $replaced = replaceWithParam($value);
+    push(@tmpParam, $replaced);
+  }
+  my $tmp = join("/", @tmpParam);
+  $parameters{$_[1]} = $tmp;
 
 }
 
@@ -117,15 +138,6 @@ sub executeMParam(@) {
   my @split2 = &removeBraces($splitEqual[1]);
   my $name = $split1[1];
   $quantityParameters{$name} = \@split2;
-}
-
-sub existMParam($) {
-  foreach my $key (keys(%parameters)) {
-    if($key eq $_[0]) {
-      return 1;
-    }
-  }
-  return 0;
 }
 
 sub removeBraces(@) {
@@ -165,7 +177,7 @@ sub executeCmd(@) {
     print "Executing: " . $exec . "\n";
     my $result = `$exec 2>&1`;
     $returnValue = $?;
-    if($returnValue < 0) {
+    if($returnValue < 0 || $returnValue > 0) {
       print "Executing command failed: " . $result . "\n";
       return 1;
     } else {
