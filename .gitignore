@@ -8,3 +8,6 @@
 *.o
 *.hi
 reservations
+
+# Common #
+*~

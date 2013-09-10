@@ -1,0 +1,50 @@
+<project name="calculator" default='compile' basedir="." >
+
+
+    <property name="name" value="calculator" />
+    <property name="build-dir" location="bin" />
+    <property name="source-dir" location="src" />
+    <property name="dist-dir" location="dist" />
+    <property name="jar" location="${dist-dir}/lib/${name}.jar" />
+    
+    <!-- targtets -->
+
+    <target name="init">
+        <mkdir dir="${build-dir}" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${build-dir}" />
+        <mkdir dir="${build-dir}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${source-dir}" destdir="${build-dir}" includeantruntime="false" />
+        <copy todir="${build-dir}">
+            <fileset dir="${build-dir}" />
+        </copy>
+        <copy todir="${build-dir}">
+            <fileset dir="${build-dir}" />
+        </copy>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist-dir}/lib"/>
+        <jar jarfile="${jar}" basedir="${build-dir}">
+            <manifest>
+		<!-- TODO: set the correct property -->
+                <attribute name="Main-Class" value="progspr.java.calculator.Calculator" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="dist">
+        <java jar="${jar}" fork="true">
+	<!-- TODO: setup correct arguments -->
+            <arg line="9400" />
+        </java>
+    </target>
+
+<!-- ##############################################-->
+
+</project>
