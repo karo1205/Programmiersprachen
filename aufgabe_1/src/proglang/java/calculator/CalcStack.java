@@ -19,7 +19,11 @@ public class CalcStack implements ICalcStack {
 
 	@Override
 	public String pop() throws CalcStackEmptyException {
-		return stack.pop();
+		try {
+			return stack.pop();
+		} catch (Exception e) {
+			throw new CalcStackEmptyException("Stack is empty but operator would expect more parameters.");
+		}
 	}
 
 	@Override

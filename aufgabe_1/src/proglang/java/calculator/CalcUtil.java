@@ -27,18 +27,21 @@ public class CalcUtil {
 	}
 	
 	/**
-	 * Checks if the given String is a long-value.
+	 * Checks if the given String is a ASCII in printable range, 
+	 * thaqt is, in range [32..126] decimal.
 	 * @param toCheck
 	 * @return true if long
 	 */
 	public static boolean isAscii(String toCheck) {
 		// TODO not sure if this is correct...
 		try{ 
-			Integer.parseInt(toCheck);
+			int i = Integer.parseInt(toCheck);
+			if (i > 31 && i < 127)
+				return true;
 		} catch(Exception e){
 			return false;
 		}	
-		return true;	
+		return false;
 	}
 	
 	/**
@@ -85,7 +88,7 @@ public class CalcUtil {
 	 * @return true if braced expression
 	 */
 	public static boolean isBracedExpression(String toCheck) {
-		return toCheck.startsWith("(") && toCheck.endsWith(")"); 
+		return toCheck != null && toCheck.startsWith("(") && toCheck.endsWith(")"); 
 	}
 	
 	/**

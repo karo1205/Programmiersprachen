@@ -5,6 +5,7 @@ import proglang.java.calculator.ICalcContext;
 import proglang.java.calculator.ICalcStack;
 import proglang.java.calculator.exception.CalcException;
 import proglang.java.calculator.exception.CalcOperationException;
+
 /**
  * Takes the two topmost elements of the stack. One must be a non negative number n, one must be a braced expression.<br>
  * Result is the ASCII-code of the n'th element of the braced expression, which is pushed on the stac.k<br>
@@ -72,6 +73,4 @@ public class ReadOperator implements ICalcOperator {
 	public char getOperatorSign() {
 		return '?';
 	}
-
-
 }

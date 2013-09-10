@@ -79,15 +79,15 @@ public class CalcContext implements ICalcContext {
 		operatorMap.put("#", new DeleteOperator());			//tested
 		operatorMap.put("/", new DivOperator());			//tested
 		operatorMap.put("=", new EqualsOperator());			//tested
-		operatorMap.put(";", new ExtendOperator());
+		operatorMap.put(";", new ExtendOperator());			//tested
 		operatorMap.put("-", new MinusOperator());			//tested
 		operatorMap.put("%", new ModOperator());			//tested
 		operatorMap.put("*", new MultiplyOperator());		//tested
 		operatorMap.put("~", new NegationOperator());		//tested
 		operatorMap.put("|", new OrOperator());				//tested
-		operatorMap.put("$", new OutputOperator());
+		operatorMap.put("$", new OutputOperator());			
 		operatorMap.put("+", new PlusOperator());			//tested
-		operatorMap.put("?", new ReadOperator());
+		operatorMap.put("?", new ReadOperator());			//tested
 		operatorMap.put("<", new SmallerThanOperator());	//tested
 	}
 }

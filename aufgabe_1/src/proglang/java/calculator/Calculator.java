@@ -79,6 +79,43 @@ class Calculator
 		System.out.println("-------------------------------------\n\n");
 		context.getStack().clear();
 		context.getInputList().clear();
+		
+//		System.out.println("Erweitern");
+//		run ("(123ab)65;");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		run ("65(123ab);");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		run ("(123ab)11;");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		run ("122 a;");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+
+		
+		System.out.println("Auslesen");
+		run ("2?");
+		context.getStack().clear();
+		context.getInputList().clear();
+		System.out.println("-------------------------------------\n\n");
+
+//		run ("4(12345)?");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		System.out.println("-------------------------------------\n\n");
+//		
+//		run ("(12345)8?");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		System.out.println("-------------------------------------\n\n");
+//		
+//		run ("12345 8?");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//
+		System.out.println("-------------------------------------\n\n");
 }
 	/**
 	 * Main computation loop. Note that this loop does not clear input list or stack, so that
@@ -115,5 +152,4 @@ class Calculator
 	private void printCalcIntern() {
 		System.out.println(context.getStack().toString() + "^" + context.getInputList().toString());
 	}
-
 }

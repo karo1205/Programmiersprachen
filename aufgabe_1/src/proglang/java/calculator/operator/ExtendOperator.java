@@ -27,24 +27,24 @@ public class ExtendOperator implements ICalcOperator {
 		String op1 = stack.pop();
 		String op2 = stack.pop();
 		
-		if (CalcUtil.isLong(op1)) {
+		if (CalcUtil.isAscii(op1)) {
 			bracedExp = op2;
 			asciiValue = op1;
 		} else {
-			if (CalcUtil.isLong(op2)) {
+			if (CalcUtil.isAscii(op2)) {
 				asciiValue = op2;
 				bracedExp = op1;
 			}
 			else {
 				if (!(CalcUtil.isBracedExpression(op2)))
-					throw (new CalcOperationException("One expression must be a long value"));			
+					throw (new CalcOperationException("One expression must be a braced expression, the other one ASCII in printable range (32-126)"));			
 			}
 		}
 		if (!CalcUtil.isBracedExpression(bracedExp))
-			throw (new CalcOperationException("One expression must be a braced expression"));
+			throw (new CalcOperationException("One expression must be a braced expression, the other one ASCII in printable range (32-126)"));
 		
-		StringBuilder sb = new StringBuilder(bracedExp);
 		bracedExp = CalcUtil.getUnbracedExpression(bracedExp);
+		StringBuilder sb = new StringBuilder(bracedExp);
 		char character = (char)Integer.parseInt(asciiValue);
 		sb.append(character);
 		
