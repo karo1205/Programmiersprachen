@@ -33,7 +33,6 @@ public class CalcUtil {
 	 * @return true if long
 	 */
 	public static boolean isAscii(String toCheck) {
-		// TODO not sure if this is correct...
 		try{ 
 			int i = Integer.parseInt(toCheck);
 			if (i > 31 && i < 127)

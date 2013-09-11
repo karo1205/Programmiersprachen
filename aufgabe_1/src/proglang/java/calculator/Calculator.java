@@ -95,11 +95,11 @@ class Calculator
 //		context.getInputList().clear();
 
 		
-		System.out.println("Auslesen");
-		run ("2?");
-		context.getStack().clear();
-		context.getInputList().clear();
-		System.out.println("-------------------------------------\n\n");
+//		System.out.println("Auslesen");
+//		run ("2?");
+//		context.getStack().clear();
+//		context.getInputList().clear();
+//		System.out.println("-------------------------------------\n\n");
 
 //		run ("4(12345)?");
 //		context.getStack().clear();
@@ -115,6 +115,17 @@ class Calculator
 //		context.getStack().clear();
 //		context.getInputList().clear();
 //
+		System.out.println("Ausgabe");
+		run ("65 0$");
+		run ("47 63$");
+		run ("76 64$");
+		run ("33 125$");
+		run ("99 217$");
+		run ("100 -1$");
+		context.getStack().clear();
+		context.getInputList().clear();
+		System.out.println("-------------------------------------\n\n");
+
 		System.out.println("-------------------------------------\n\n");
 }
 	/**
@@ -140,7 +151,7 @@ class Calculator
 			}
 		} catch (Exception e) {
 			// TODO exception handling!!!
-			//show something...
+			// show something in GUI?
 			e.printStackTrace();
 		}
 	}

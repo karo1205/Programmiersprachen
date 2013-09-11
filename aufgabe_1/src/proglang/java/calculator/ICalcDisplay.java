@@ -17,7 +17,20 @@ public interface ICalcDisplay {
 	static int columns = 64;
 	
 	/**
-	 * Displays the given character at the given position. Is the position is out of range it will throw a CalcIndexOutOfRangeException
+	 * Displays the given character at the given position determined by the index unmber. <br>
+	 * The lower right field has index number 0, the one to the left number 1 and so on until <i>rows</i>-1.<br>
+	 * The leftmost field of the next row (if present) has index <i>rows</i> and so on.<br> 
+	 * If the position is out of range it will throw a CalcIndexOutOfRangeException
+	 * @param row
+	 * @param column
+	 * @param character
+	 * @throws CalcIndexOutOfRangeException
+	 */
+	public void setChar(long indexNumber, char character) throws CalcIndexOutOfRangeException;
+
+	/**
+	 * Displays the given character at the given position.<br>
+	 * If the position is out of range it will throw a CalcIndexOutOfRangeException
 	 * @param row
 	 * @param column
 	 * @param character
@@ -26,7 +39,28 @@ public interface ICalcDisplay {
 	public void setChar(int row, int column, char character) throws CalcIndexOutOfRangeException;
 
 	/**
-	 * Clears the field at the given position. Is the position is out of range it will throw a CalcIndexOutOfRangeException
+	 * Returns the number of rows of the display. Default-Value shall be four as defined in the interface
+	 * @return count of rows
+	 */
+	public int getRowCount();
+
+	/**
+	 * Returns the number of columns of the display. Default-Value shall be four as defined in the interface
+	 * @return count of columns
+	 */
+	public int getColCount();
+
+	/**
+	 * Checks if the given index is within the range of the display. <br>
+	 * The index may range from 0 to <i>rows</i>*<i>columns</i>-1. 
+	 * @param index to be checked
+	 * @return true when within range, false otherwise
+	 */
+	public boolean isInIndexRange(long index);
+	
+	/**
+	 * Clears the field at the given position. <br>
+	 * If the position is out of range it will throw a CalcIndexOutOfRangeException
 	 * @param row
 	 * @param column
 	 * @throws CalcIndexOutOfRangeException
@@ -37,4 +71,6 @@ public interface ICalcDisplay {
 	 * Clears all fields
 	 */
 	public void clearAll();
+	
+	
 }
