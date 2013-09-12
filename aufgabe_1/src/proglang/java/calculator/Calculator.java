@@ -3,9 +3,12 @@ import proglang.java.calculator.*;
 
 import javax.swing.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
@@ -16,9 +19,11 @@ import java.net.UnknownHostException;
  * @author    Robert Kapeller <rkapeller@gmail.com>
  * @copyright 2013 Robert Kapeller
  */
-class Calculator
+class Calculator implements ActionListener
 {
-	ICalcContext context = null;
+	private ICalcContext context = null;
+	private CalculatorGUI cGui;
+	private final String defaultMessage = "Enter formula and press Enter";
 	/**
 	 * Calculator main method.
 	 *
@@ -64,8 +69,9 @@ class Calculator
 	 */
 	private void initCalculator() {
 		
-		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay());
-		
+		cGui = new CalculatorGUI(this);
+		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui));
+		cGui.setVisible(true);
 		// TODO remove test for dist
 		test();
 	}
@@ -116,6 +122,13 @@ class Calculator
 //		context.getInputList().clear();
 //
 		System.out.println("Ausgabe");
+		for (int i = 0; i < 4; i++) {
+			int pos = i + 64*i;
+			String index = Integer.toString(pos);
+			String o = new String("65 " + index + "$");
+			run (o);
+		}
+		
 		run ("65 0$");
 		run ("47 63$");
 		run ("76 64$");
@@ -153,14 +166,47 @@ class Calculator
 			// TODO exception handling!!!
 			// show something in GUI?
 			e.printStackTrace();
+			cGui.setCommentLineText(e.getMessage());
+
 		}
 	}
 	
 	/**
+	 * Reads each line from the input field and runs it
+	 */
+	private void runInputField() {
+		// TODO run from input field
+		String text = cGui.getFormulaText();
+		String[] lines = text.split("\n");
+		for (int i = 0; i<lines.length; i++) {
+			run(lines[i]);
+		}
+	}
+	
+	/**
+	 * 
 	 * Prints the internals of the calculator, that is, stack and input list to stdout.
 	 * The output is in the same form as in the Aufgabe-sheet
 	 */
 	private void printCalcIntern() {
 		System.out.println(context.getStack().toString() + "^" + context.getInputList().toString());
 	}
+	
+	/**
+	 * Clears everything: list, stack and display
+	 */
+	private void clearAll() {
+		context.getStack().clear();
+		context.getInputList().clear();
+		cGui.clearAll();
+		cGui.setCommentLineText(defaultMessage);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+        if ("enter".equals(e.getActionCommand())) {
+        	runInputField();
+        } else {
+        	clearAll();
+        }
+    }
 }

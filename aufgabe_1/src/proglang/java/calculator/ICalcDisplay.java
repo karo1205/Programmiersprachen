@@ -6,7 +6,7 @@ import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
  * Interface for the Display-implementation of the Calculator<br>
  * The Display has n rows with m characters fields. Each field can hold exactly one character and is to be set indenpendently. 
  * The default size is 4 rows and 64 columns and are indexed beginning with 0. 
- * The index (0/0) belongs to the left bottom field
+ * The index (0/0) belongs to the right bottom field
  * 
  * @package   proglang.java.calculator
  * @author    Robert Kapeller <rkapeller@gmail.com>

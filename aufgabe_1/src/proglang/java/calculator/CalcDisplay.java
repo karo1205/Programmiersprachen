@@ -10,11 +10,18 @@ import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
  * @copyright 2013 Robert Kapeller
  */
 
+@SuppressWarnings("all")
 public class CalcDisplay implements ICalcDisplay {
 	
-	public CalcDisplay() {
-//		this (ICalcDisplay.columns, ICalcDisplay.rows);
+	private ICalcDisplayGUI calcDisplayGUI;
+	
+	public CalcDisplay(ICalcDisplayGUI calcDisplayGUI) {
+		this.calcDisplayGUI = calcDisplayGUI;
+		calcDisplayGUI.setDisplaySize(4, 64);
 	}
+	
+	// no 
+	private CalcDisplay() {}
 	/**
 	 * Not imlemented public. We will just deal with the default 4*64...
 	 * @param columns
@@ -30,8 +37,9 @@ public class CalcDisplay implements ICalcDisplay {
 			throws CalcIndexOutOfRangeException {
 
 		checkRowCol(row, column);
-		//TODO setCharacter
+		// TODO remove in live?
 		System.out.println("Row: " + row + ", Columns: " + column + ". Char: " + character);
+		calcDisplayGUI.setCharacter(row, column, character);
 		
 	}
 	
@@ -42,19 +50,17 @@ public class CalcDisplay implements ICalcDisplay {
 			throw new CalcIndexOutOfRangeException("Index number for display is out of range");
 		
 		setChar((int)indexNumber / ICalcDisplay.columns, (int)indexNumber % ICalcDisplay.columns, character);
-//		checkRowCol(row, column);
 	}
 
 	@Override
 	public void clearChar(int row, int column)
 			throws CalcIndexOutOfRangeException {
-		// TODO Auto-generated method stub
 		checkRowCol(row, column);
 	}
 
 	@Override
 	public void clearAll() {
-		// TODO Auto-generated method stub
+		calcDisplayGUI.clearAll();
 	}
 	
 	@Override
