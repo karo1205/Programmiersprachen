@@ -17,6 +17,7 @@ import proglang.java.calculator.operator.*;
  *
  */
 
+@SuppressWarnings("all")
 public class CalcContext implements ICalcContext {
 
 	private ICalcStack calcStack = null;

@@ -3,7 +3,7 @@ package proglang.java.calculator;
 import proglang.java.calculator.exception.CalcParseException;
 
 /**
- * It treats the String like a 
+ * List is implemented as a String. The next character to be fetched is the leftmost char in the String.  
  * @package   proglang.java.calculator
  * @author    Robert Kapeller <rkapeller@gmail.com>
  * @copyright 2013 Robert Kapeller
@@ -12,8 +12,6 @@ import proglang.java.calculator.exception.CalcParseException;
 
 public class CalcInputList implements ICalcInputList {
 	private String list;
-	private static int int9 = (int)'9';
-	private static int int0 = (int)'9';
 	private static int intMinus = (int)'-';
 	private static int intPlus = (int)'+';
 	

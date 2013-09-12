@@ -37,7 +37,7 @@ public class CalcDisplay implements ICalcDisplay {
 			throws CalcIndexOutOfRangeException {
 
 		checkRowCol(row, column);
-		// TODO remove in live?
+
 		System.out.println("Row: " + row + ", Columns: " + column + ". Char: " + character);
 		calcDisplayGUI.setCharacter(row, column, character);
 		

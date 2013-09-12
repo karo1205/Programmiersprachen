@@ -1,16 +1,6 @@
 package proglang.java.calculator;
-import proglang.java.calculator.*;
-
-import javax.swing.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
 /**
  * Main Class
@@ -19,6 +9,7 @@ import java.net.UnknownHostException;
  * @author    Robert Kapeller <rkapeller@gmail.com>
  * @copyright 2013 Robert Kapeller
  */
+@SuppressWarnings("all")
 class Calculator implements ActionListener
 {
 	private ICalcContext context = null;
@@ -38,8 +29,6 @@ class Calculator implements ActionListener
 		}
 
 		Calculator calc = new Calculator(args);
-		// TODO start calc and let the input run
-		// calc.run();
 	}
 
 	/**
@@ -60,8 +49,6 @@ class Calculator implements ActionListener
 	public Calculator(String[] args)
 	{
 		this ();
-		// if there are args, this is meant to be an input file
-		// TODO
 	}
 	
 	/**
@@ -72,8 +59,8 @@ class Calculator implements ActionListener
 		cGui = new CalculatorGUI(this);
 		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui));
 		cGui.setVisible(true);
-		// TODO remove test for dist
-		test();
+
+		// test();
 	}
 
 	/**
@@ -163,8 +150,6 @@ class Calculator implements ActionListener
 				s=context.getInputList().getNextElement();
 			}
 		} catch (Exception e) {
-			// TODO exception handling!!!
-			// show something in GUI?
 			e.printStackTrace();
 			cGui.setCommentLineText(e.getMessage());
 
@@ -175,7 +160,6 @@ class Calculator implements ActionListener
 	 * Reads each line from the input field and runs it
 	 */
 	private void runInputField() {
-		// TODO run from input field
 		String text = cGui.getFormulaText();
 		String[] lines = text.split("\n");
 		for (int i = 0; i<lines.length; i++) {

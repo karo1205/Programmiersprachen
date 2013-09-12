@@ -14,7 +14,6 @@ import proglang.java.calculator.exception.CalcException;
  */
 public class EqualsOperator implements ICalcOperator {
 
-	// TODO: REWRITE according to manual
 	// interpretation: just compare the two strings popped from stack...
 	@Override
 	public void operate(ICalcContext calcContext) throws CalcException {

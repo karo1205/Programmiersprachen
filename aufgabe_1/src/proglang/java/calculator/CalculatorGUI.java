@@ -1,26 +1,21 @@
 package proglang.java.calculator;
 
-import javax.swing.*;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JPanel;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.JTextArea;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 
 import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
-
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
 public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
@@ -33,7 +28,7 @@ public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
 	int rowCount, colCount;
 	
 	public CalculatorGUI(ActionListener al) {
-		// TODO Make GUI
+
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		BorderLayout borderLayout = (BorderLayout) getContentPane().getLayout();

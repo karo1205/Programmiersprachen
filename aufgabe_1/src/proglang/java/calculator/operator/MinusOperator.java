@@ -24,6 +24,7 @@ public class MinusOperator implements ICalcOperator {
 		stack.push(Long.toString(op2 - op1));
 	}
 	
+	@Override
 	public char getOperatorSign() {
 		return '-';
 	}
