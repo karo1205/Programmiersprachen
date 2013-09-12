@@ -69,6 +69,7 @@ public class CalcStack implements ICalcStack {
 
 		while (iter.hasNext()){
 		    sb.append(iter.next());
+		    sb.append(" ");
 		}
 		return sb.toString();
 	}
