@@ -1,0 +1,32 @@
+Beispiel 1 der Angabe:
+======================
+0(9)(9~)(4!5#2+#@)@
+
+
+0(9)(9~)4!5#2+#
+ 
+Beispiel 2 der Angabe: (Achtung: Leerzeichen nach dem "-")
+======================
+A: (3!3!1- 2!1=()5!C@3#*)
+C: (4!5#2+#@)
+3 ^A3!4#3!@3#
+
+3 Faktorielle:
+--------------
+3(3!3!1- 2!1=()5!(4!5#2+#@)@3#*)3!4#3!@3#
+
+Ops:
+====
++, -, *, /, %, &, |, =, <, > : eh klar...
+n!	- Kopieren:	ersetzt das oberste Element im Stack durch das n-te Element im Stack (von oben)
+n#	- Löschen: 	nimmt das oberste Element vom Stack und löscht zusätzlich das n-te Elementim Stack
+(x)@	- Anwenden: 	Klammer wird entfernt Ausdruck kommt in Liste an vorderster Stelle, nichts sonst
+(..)n ?	- Auslesen: 	ersetzt den geklamerten Ausdruck durch den ASCII-Wert des n-ten Zeichens in der Klammer
+(x)n;	- Erweitern:	erweitert den geklammerten Ausdruck durch das durch den ASCII-Wert n repräsentierte Zeichen --> (xN)
+a p$	- Ausgabe:	gibt das Zeichen, welches durch den ASCII-Wert a repräsentiert wird, an die Stelle p im Display aus
+
+
+Testaufgabe 1:
+==============
+(Text) Zeile (Display)
+

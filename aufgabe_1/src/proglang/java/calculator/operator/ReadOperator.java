@@ -32,7 +32,7 @@ public class ReadOperator implements ICalcOperator {
 			// out of range, just push -1
 			stack.push("-1");
 		} else {
-			char c = bracedExp.charAt((int)index);
+			char c = CalcUtil.getUnbracedExpression(bracedExp).charAt((int)index);
 			stack.push(Integer.toString((int)c));
 		}
 	}

@@ -59,75 +59,8 @@ class Calculator implements ActionListener
 		cGui = new CalculatorGUI(this);
 		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui));
 		cGui.setVisible(true);
-
-		// test();
 	}
 
-	/**
-	 * Test function.
-	 */
-	private void test() {
-		System.out.println("Demo Aufgabe nach aufgabe 1");
-		run ("1(9)(9~)(4!5#2+#@)@");
-		System.out.println("-------------------------------------\n\n");
-		context.getStack().clear();
-		context.getInputList().clear();
-		
-//		System.out.println("Erweitern");
-//		run ("(123ab)65;");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		run ("65(123ab);");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		run ("(123ab)11;");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		run ("122 a;");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-
-		
-//		System.out.println("Auslesen");
-//		run ("2?");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		System.out.println("-------------------------------------\n\n");
-
-//		run ("4(12345)?");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		System.out.println("-------------------------------------\n\n");
-//		
-//		run ("(12345)8?");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//		System.out.println("-------------------------------------\n\n");
-//		
-//		run ("12345 8?");
-//		context.getStack().clear();
-//		context.getInputList().clear();
-//
-		System.out.println("Ausgabe");
-		for (int i = 0; i < 4; i++) {
-			int pos = i + 64*i;
-			String index = Integer.toString(pos);
-			String o = new String("65 " + index + "$");
-			run (o);
-		}
-		
-		run ("65 0$");
-		run ("47 63$");
-		run ("76 64$");
-		run ("33 125$");
-		run ("99 217$");
-		run ("100 -1$");
-		context.getStack().clear();
-		context.getInputList().clear();
-		System.out.println("-------------------------------------\n\n");
-
-		System.out.println("-------------------------------------\n\n");
-}
 	/**
 	 * Main computation loop. Note that this loop does not clear input list or stack, so that
 	 * previously done (pre)computations are used as well.
@@ -153,6 +86,8 @@ class Calculator implements ActionListener
 			e.printStackTrace();
 			cGui.setCommentLineText(e.getMessage());
 
+		} finally {
+			System.out.println("-----------------");
 		}
 	}
 	

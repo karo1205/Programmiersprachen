@@ -29,7 +29,7 @@ public interface ICalcStack {
 	String pop() throws CalcStackEmptyException;
 	
 	/**
-	 * Gets the n'th element of the stack and returns it. The element of the stack is not altered in any way
+	 * Gets the n'th element of the stack and returns it. The element of the stack is not altered in any way.  Index starts with 1 (top of stack)
 	 * @return n'th element of the stack
 	 * @param position which element to return
 	 * @throws CalcIndexOutOfRangeException
@@ -37,8 +37,7 @@ public interface ICalcStack {
 	String read(Long position) throws CalcIndexOutOfRangeException;
 	
 	/**
-	 * Deletes the n'th element of the stack and returns it.
-	 * @return n'th element of the stack
+	 * Deletes the n'th element of the stack and returns it. Index starts with 1 (top of stack)
 	 * @throws CalcIndexOutOfRangeException
 	 */
 	void delete(Long position) throws CalcIndexOutOfRangeException;

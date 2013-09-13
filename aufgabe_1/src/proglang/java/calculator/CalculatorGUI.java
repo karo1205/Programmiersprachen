@@ -66,11 +66,11 @@ public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
 		formulaArea.setColumns(64);
 		formulaArea.setToolTipText("Insert your formula here...");
 		formulaArea.setLineWrap(true);
-		formulaArea.setRows(8);
 		
 		JScrollPane scrollPane = new JScrollPane(formulaArea);
 		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		inputPanel.add(scrollPane);
+		formulaArea.setRows(8);
 		
 		lblErrorMessage = new JLabel("");
 		getContentPane().add(lblErrorMessage, BorderLayout.SOUTH);

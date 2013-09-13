@@ -50,8 +50,8 @@ public class CalcStack implements ICalcStack {
 	}
 	
 	/**
-	 * The built in functions for the Java-stack take the index from 0 (oldest entry) to n-1 (newst one)
-	 * This function recomputes the index from 1 (newest entry) to n (oldest entry) 
+	 * The built in functions for the Java-stack take the index from 0 (oldest entry) to n-1 (top of stack)
+	 * This function recomputes the index from 1 (top of stack) to n (oldest entry) 
 	 * @param index
 	 * @return index as the built in Stack sees it
 	 */
@@ -69,7 +69,7 @@ public class CalcStack implements ICalcStack {
 
 		while (iter.hasNext()){
 		    sb.append(iter.next());
-		    sb.append(" ");
+		    sb.append(" ");	// for readability...
 		}
 		return sb.toString();
 	}
