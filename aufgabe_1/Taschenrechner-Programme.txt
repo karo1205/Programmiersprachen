@@ -18,12 +18,63 @@ Ops:
 n!	- Kopieren:	ersetzt das oberste Element im Stack durch das n-te Element im Stack (von oben)
 n#	- Löschen: 	nimmt das oberste Element vom Stack und löscht zusätzlich das n-te Elementim Stack
 (x)@	- Anwenden: 	Klammer wird entfernt Ausdruck kommt in Liste an vorderster Stelle, nichts sonst
-(..)n ?	- Auslesen: 	ersetzt den geklamerten Ausdruck durch den ASCII-Wert des n-ten Zeichens in der Klammer
+(..)n ?	- Auslesen: 	ersetzt den geklamerten Ausdruck durch den ASCII-Wert des n-ten Zeichens in der Klammer (linkestes Zeichen in der Klammer hat Index 0
 (x)n;	- Erweitern:	erweitert den geklammerten Ausdruck durch das durch den ASCII-Wert n repräsentierte Zeichen --> (xN)
 a p$	- Ausgabe:	gibt das Zeichen, welches durch den ASCII-Wert a repräsentiert wird, an die Stelle p im Display aus
+
+Einige Muster:
+==============
+Vertauschen der obersten 2 Elemente im Stack:
+---------------------------------------------
+	3!4#: [a b] --> [b a]
+
+Holen des n-ten Elementes an die erste Stelle
+---------------------------------------------
+	(n+1)!(n+2)#:
+
+
+
 
 Testaufgabe 1:
 ==============
 (Text) Zeile (Display)
 
-(abcde)2!
+(abcde)2!0?0$
+
+
+CHECKs
+------
+(Error)0?
+()0?
+
+Einfache Ausgaben:
+==================
+"Error": 69 0$114 1$ 114 2$ 111 3$ 114 4$
+
+
+Ausgabe eines Strings in Klammer:
+=================================
+Anfangsbedingung: 
+Stack: auzugebender String
+
+
+while ( != -1)
+	duplicate string
+	ersetze oberstes element (string) durch ASCII-Zeichen an index-Stelle
+	Gib oberstes element aus an index-Stelle
+	
+(String) ?????
+
+1!
+
+
+
+
+
+
+
+
+
+
+
+

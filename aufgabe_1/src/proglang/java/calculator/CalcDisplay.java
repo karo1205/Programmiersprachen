@@ -14,23 +14,23 @@ import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
 public class CalcDisplay implements ICalcDisplay {
 	
 	private ICalcDisplayGUI calcDisplayGUI;
-	
-	public CalcDisplay(ICalcDisplayGUI calcDisplayGUI) {
+	private int displayRows;
+	private int displayCols;
+	/**
+	 * main constructor, setting the display and the display size in rows and cols
+	 * @param calcDisplayGUI
+	 * @param rows
+	 * @param cols
+	 */
+	public CalcDisplay(ICalcDisplayGUI calcDisplayGUI, int rows, int cols) {
 		this.calcDisplayGUI = calcDisplayGUI;
-		calcDisplayGUI.setDisplaySize(4, 64);
+		this.displayRows = rows;
+		this.displayCols = cols;
+		calcDisplayGUI.setDisplaySize(rows, cols);
 	}
 	
 	// no 
 	private CalcDisplay() {}
-	/**
-	 * Not imlemented public. We will just deal with the default 4*64...
-	 * @param columns
-	 * @param rows
-	 */
-//	private CalcDisplay (int columns, int rows) {
-//		this.columns = columns;
-//		this.rows = rows;
-//	}
 	
 	@Override
 	public void setChar(int row, int column, char character)
@@ -40,7 +40,6 @@ public class CalcDisplay implements ICalcDisplay {
 
 		System.out.println("Row: " + row + ", Columns: " + column + ". Char: " + character);
 		calcDisplayGUI.setCharacter(row, column, character);
-		
 	}
 	
 	@Override
@@ -49,7 +48,7 @@ public class CalcDisplay implements ICalcDisplay {
 		if (!isInIndexRange(indexNumber))
 			throw new CalcIndexOutOfRangeException("Index number for display is out of range");
 		
-		setChar((int)indexNumber / ICalcDisplay.columns, (int)indexNumber % ICalcDisplay.columns, character);
+		setChar((int)indexNumber / displayCols, (int)indexNumber % displayCols, character);
 	}
 
 	@Override
@@ -65,26 +64,26 @@ public class CalcDisplay implements ICalcDisplay {
 	
 	@Override
 	public int getRowCount() {
-		return rows;
+		return displayRows;
 	}
 
 	@Override
 	public int getColCount() {
-		return columns;
+		return displayCols;
 	}
 	
 	@Override
 	public boolean isInIndexRange(long index) {
-		if (index >= 0 && index < ICalcDisplay.columns*ICalcDisplay.rows)
+		if (index >= 0 && index < displayCols * displayRows)
 			return true;
 		return false;
 	}
 	
 	private void checkRowCol(int row, int col)
 			throws CalcIndexOutOfRangeException {
-		if (row >= ICalcDisplay.rows || row < 0)
+		if (row >= displayRows || row < 0)
 			throw new CalcIndexOutOfRangeException("Row " + row + " is out of range");
-		if (col >= ICalcDisplay.columns || col < 0)
+		if (col >= displayCols || col < 0)
 			throw new CalcIndexOutOfRangeException("Column " + col + " is out of range");
 	}
 }

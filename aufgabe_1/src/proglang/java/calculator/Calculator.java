@@ -12,6 +12,10 @@ import java.awt.event.ActionListener;
 @SuppressWarnings("all")
 class Calculator implements ActionListener
 {
+	// display size
+	private final int calcRows = 4;
+	private final int calcCols = 64;
+	
 	private ICalcContext context = null;
 	private CalculatorGUI cGui;
 	private final String defaultMessage = "Enter formula and press Enter";
@@ -24,7 +28,7 @@ class Calculator implements ActionListener
 	 */
 	public static void main(String[] args)
 	{
-		if (args.length > 1) {
+		if (args.length > 0) {
 			usage();
 		}
 		Calculator calc = new Calculator(args);
@@ -37,7 +41,7 @@ class Calculator implements ActionListener
 	 */
 	protected static void usage()
 	{
-		System.out.println("Usage: java -jar calculator.jar [INPUT_FILE]");
+		System.out.println("Usage: java -jar calculator.jar");
 		System.exit(0);
 	}
 	
@@ -56,7 +60,7 @@ class Calculator implements ActionListener
 	private void initCalculator() {
 		
 		cGui = new CalculatorGUI(this);
-		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui));
+		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui, calcRows, calcCols));
 		cGui.setVisible(true);
 		clearAll();
 	}

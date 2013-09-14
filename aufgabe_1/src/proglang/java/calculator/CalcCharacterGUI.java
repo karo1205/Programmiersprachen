@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JLabel;
+import javax.swing.border.EtchedBorder;
 
 /**
  * Implements one digit of the output display 
@@ -15,7 +16,8 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class CalcCharacterGUI extends JLabel {
 
-	private static Font f = new Font("Courier", Font.BOLD, 12);
+	private static Font f = new Font("Courier", Font.BOLD, 14);
+	private static Color myColor= new Color(0,225,0);
 	
 	public CalcCharacterGUI () {
 		super();
@@ -32,7 +34,9 @@ public class CalcCharacterGUI extends JLabel {
 	private void setLabelStyle() {
 //		setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		setFont(f);
-		setForeground(Color.DARK_GRAY);
+//		setForeground(Color.GREEN);
+		setForeground(myColor);
+		setOpaque(false);
 	}
 
 }

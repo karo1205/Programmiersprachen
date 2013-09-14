@@ -13,9 +13,7 @@ import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
  * @copyright 2013 Robert Kapeller
  */
 public interface ICalcDisplay {
-	static int rows = 4;
-	static int columns = 64;
-	
+
 	/**
 	 * Displays the given character at the given position determined by the index unmber. <br>
 	 * The lower right field has index number 0, the one to the left number 1 and so on until <i>rows</i>-1.<br>

@@ -1,6 +1,7 @@
 package proglang.java.calculator;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		displayPanel = new JPanel();
 		getContentPane().add(displayPanel, BorderLayout.NORTH);
 		displayPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		displayPanel.setBackground(Color.BLACK);
 						
 		JPanel inputPanel = new JPanel();
 		getContentPane().add(inputPanel, BorderLayout.CENTER);
@@ -83,10 +85,23 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		this.setTitle("Calculator 0.1");
 	}
 
+	public String getFormulaText() {
+		return formulaArea.getText();
+	}
+	
+	public void setCommentLineText(String text) {
+		lblErrorMessage.setText(text);
+	}
+	
+	public void setFocus() {
+		formulaArea.requestFocusInWindow();	
+	}
+
 	// --------------------------------------
 	// ICalcDisplayGUI - implementations
 	// --------------------------------------
 	
+	@Override
 	public void setDisplaySize(int rows, int cols) {
 		rowCount = rows; colCount = cols;
 		
@@ -100,15 +115,17 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 			}
 		}
 	}
-	
+	@Override
 	public void setCharacter(int row, int column, char character) throws CalcIndexOutOfRangeException {
 		characterMap[row][column].setText(Character.toString(character)); 
 	}
 
+	@Override
 	public void clearCharacter(int row, int column) throws CalcIndexOutOfRangeException {
 		characterMap[row][column].setText(emptyFieldString); 
 	}
 	
+	@Override
 	public void clearAll() {
 		for (int r = 0; r <= rowCount-1;  r++) {
 			for (int c = 0; c <= colCount-1; c++) {
@@ -117,17 +134,5 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		}
 		formulaArea.setText("");
 		setFocus();
-	}
-	
-	public String getFormulaText() {
-		return formulaArea.getText();
-	}
-	
-	public void setCommentLineText(String text) {
-		lblErrorMessage.setText(text);
-	}
-	
-	public void setFocus() {
-		formulaArea.requestFocusInWindow();	
 	}
 }
