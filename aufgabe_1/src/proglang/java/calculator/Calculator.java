@@ -15,19 +15,18 @@ class Calculator implements ActionListener
 	private ICalcContext context = null;
 	private CalculatorGUI cGui;
 	private final String defaultMessage = "Enter formula and press Enter";
+
 	/**
 	 * Calculator main method.
 	 *
 	 * @param args
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{
 		if (args.length > 1) {
 			usage();
 		}
-
 		Calculator calc = new Calculator(args);
 	}
 
@@ -59,6 +58,7 @@ class Calculator implements ActionListener
 		cGui = new CalculatorGUI(this);
 		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui));
 		cGui.setVisible(true);
+		clearAll();
 	}
 
 	/**
@@ -124,6 +124,7 @@ class Calculator implements ActionListener
 	public void actionPerformed(ActionEvent e) {
         if ("enter".equals(e.getActionCommand())) {
         	runInputField();
+        	cGui.setFocus();
         } else {
         	clearAll();
         }

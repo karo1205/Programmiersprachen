@@ -2,9 +2,6 @@ Beispiel 1 der Angabe:
 ======================
 0(9)(9~)(4!5#2+#@)@
 
-
-0(9)(9~)4!5#2+#
- 
 Beispiel 2 der Angabe: (Achtung: Leerzeichen nach dem "-")
 ======================
 A: (3!3!1- 2!1=()5!C@3#*)
@@ -25,8 +22,8 @@ n#	- Löschen: 	nimmt das oberste Element vom Stack und löscht zusätzlich das 
 (x)n;	- Erweitern:	erweitert den geklammerten Ausdruck durch das durch den ASCII-Wert n repräsentierte Zeichen --> (xN)
 a p$	- Ausgabe:	gibt das Zeichen, welches durch den ASCII-Wert a repräsentiert wird, an die Stelle p im Display aus
 
-
 Testaufgabe 1:
 ==============
 (Text) Zeile (Display)
 
+(abcde)2!

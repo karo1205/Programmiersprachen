@@ -1,12 +1,14 @@
 package proglang.java.calculator;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,8 +20,8 @@ import javax.swing.border.EtchedBorder;
 import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
 
 @SuppressWarnings("serial")
-public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
-	// Default display: 4*64
+public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
+
 	private CalcCharacterGUI[][] characterMap;
 	private JPanel displayPanel;
 	private String emptyFieldString = new String(".");
@@ -57,20 +59,22 @@ public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
 		
 		JButton btnClear = new JButton("Clear");
 		btnClear.setMnemonic('C');
+
 		btnClear.setActionCommand("clear");
 		btnClear.setToolTipText("Clear everything");
 		buttonPanel.add(btnClear);
 		btnClear.addActionListener(al);
 		
 		formulaArea = new JTextArea();
+		formulaArea.setRows(8);
 		formulaArea.setColumns(64);
 		formulaArea.setToolTipText("Insert your formula here...");
 		formulaArea.setLineWrap(true);
-		
+
 		JScrollPane scrollPane = new JScrollPane(formulaArea);
 		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		inputPanel.add(scrollPane);
-		formulaArea.setRows(8);
+		scrollPane.setPreferredSize(new Dimension (800, 250));
 		
 		lblErrorMessage = new JLabel("");
 		getContentPane().add(lblErrorMessage, BorderLayout.SOUTH);
@@ -86,33 +90,33 @@ public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
 	public void setDisplaySize(int rows, int cols) {
 		rowCount = rows; colCount = cols;
 		
-		characterMap = new CalcCharacterGUI[cols][rows];
+		characterMap = new CalcCharacterGUI[rows][cols];
 		displayPanel.removeAll();
 		displayPanel.setLayout(new GridLayout(rows, cols, 1, 1));
-		for (int r = rows-1; r >= 0;  r--) {
-			for (int c = cols-1; c >= 0; c--) {
-				characterMap[c][r] = new CalcCharacterGUI(emptyFieldString);
-				displayPanel.add(characterMap[c][r]);		
+		for (int r = 0; r <= rows-1;  r++) {
+			for (int c = 0; c <= cols-1; c++) {
+				characterMap[r][c] = new CalcCharacterGUI(emptyFieldString);
+				displayPanel.add(characterMap[r][c]);		
 			}
 		}
 	}
 	
 	public void setCharacter(int row, int column, char character) throws CalcIndexOutOfRangeException {
-		characterMap[column][row].setText(Character.toString(character)); 
+		characterMap[row][column].setText(Character.toString(character)); 
 	}
 
 	public void clearCharacter(int row, int column) throws CalcIndexOutOfRangeException {
-		characterMap[column][row].setText(emptyFieldString); 
+		characterMap[row][column].setText(emptyFieldString); 
 	}
 	
 	public void clearAll() {
-		for (int r = rowCount-1; r >= 0;  r--) {
-			for (int c = colCount-1; c >= 0; c--) {
-				characterMap[c][r].setText(emptyFieldString); 
+		for (int r = 0; r <= rowCount-1;  r++) {
+			for (int c = 0; c <= colCount-1; c++) {
+				characterMap[r][c].setText(emptyFieldString); 
 			}
 		}
 		formulaArea.setText("");
-		
+		setFocus();
 	}
 	
 	public String getFormulaText() {
@@ -121,5 +125,9 @@ public class CalculatorGUI extends JDialog implements ICalcDisplayGUI  {
 	
 	public void setCommentLineText(String text) {
 		lblErrorMessage.setText(text);
+	}
+	
+	public void setFocus() {
+		formulaArea.requestFocusInWindow();	
 	}
 }

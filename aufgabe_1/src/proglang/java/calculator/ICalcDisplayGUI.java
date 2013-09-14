@@ -18,7 +18,7 @@ public interface ICalcDisplayGUI {
 	public void setDisplaySize(int rows, int cols);
 	
 	/**
-	 * Puts the given character to the given position. Lower right field has index (0/0).
+	 * Puts the given character to the given position. Upper left field has index (0/0).
 	 * If the position is out of range it will throw a CalcIndexOutOfRangeException
 	 * @param row
 	 * @param column
@@ -40,6 +40,6 @@ public interface ICalcDisplayGUI {
 	 * Clears all fields
 	 */
 	public void clearAll();
-		
+	
 }
 
