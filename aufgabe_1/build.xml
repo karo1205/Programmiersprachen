@@ -41,7 +41,6 @@
     <target name="run" depends="dist">
         <java jar="${jar}" fork="true">
 	<!-- TODO: setup correct arguments -->
-            <arg line="9400" />
         </java>
     </target>
 

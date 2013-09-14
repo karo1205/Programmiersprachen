@@ -20,7 +20,7 @@ public class SmallerThanOperator implements ICalcOperator {
 		
 		long opRight = CalcUtil.getLong(stack.pop());
 		long opLeft = CalcUtil.getLong(stack.pop());
-		if (opRight < opLeft)
+		if (opLeft < opRight)
 			stack.push(CalcUtil.getBooleanString(true));
 		else
 			stack.push(CalcUtil.getBooleanString(false));

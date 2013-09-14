@@ -26,11 +26,25 @@ Einige Muster:
 ==============
 Vertauschen der obersten 2 Elemente im Stack:
 ---------------------------------------------
-	3!4#: [a b] --> [b a]
+	3!4#: 
 
-Holen des n-ten Elementes an die erste Stelle
----------------------------------------------
-	(n+1)!(n+2)#:
+[x y z a b] --> [x y z b a]
+
+Holen des n-ten Elementes an die erste Stelle (erste wird zur zweiten)
+----------------------------------------------------------------------
+	(n+1)!(n+2)#
+
+If (a Vergleich b) then T else F
+--------------------------------
+a b <(T)(F)(4!5#2+#@)@
+Funktioniert prinizipiell mit <, > und =, wobei letzteres auch auf ()-Ausdrücke
+Achtung: wenn a und b Zahlen: Leerzeichen!
+Beispiele:
+
+0 1 <(T)(F)(4!5#2+#@)@ (Ergibt A)
+(abc)(abc)=(T)(F)(4!5#2+#@)@ (Ergibt A)
+
+
 
 
 
