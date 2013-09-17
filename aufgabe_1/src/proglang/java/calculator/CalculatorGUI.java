@@ -132,7 +132,7 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 				characterMap[r][c].setText(emptyFieldString); 
 			}
 		}
-		formulaArea.setText("");
+//		formulaArea.setText("");
 		setFocus();
 	}
 }
