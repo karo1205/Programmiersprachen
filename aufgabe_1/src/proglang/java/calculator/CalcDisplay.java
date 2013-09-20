@@ -17,7 +17,8 @@ public class CalcDisplay implements ICalcDisplay {
 	private int displayRows;
 	private int displayCols;
 	/**
-	 * main constructor, setting the display and the display size in rows and cols
+	 * Main constructor, setting the display and the display size in rows and cols
+	 * Expects the real display as the argument
 	 * @param calcDisplayGUI
 	 * @param rows
 	 * @param cols
@@ -55,6 +56,7 @@ public class CalcDisplay implements ICalcDisplay {
 	public void clearChar(int row, int column)
 			throws CalcIndexOutOfRangeException {
 		checkRowCol(row, column);
+		calcDisplayGUI.clearCharacter(row, column);
 	}
 
 	@Override

@@ -5,12 +5,10 @@ import proglang.java.calculator.exception.CalcStackEmptyException;
 
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.Vector;
 
 public class CalcStack implements ICalcStack {
 
 	Stack<String> stack = new Stack<String>();
-	Vector<String> v = new Vector<String>();
 	
 	@Override
 	public void push(String element) {

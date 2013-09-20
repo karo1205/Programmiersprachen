@@ -48,7 +48,7 @@ Holen des n-ten Elementes an die erste Stelle (erste wird zur zweiten)
 
 If (a Vergleich b) then T else F
 --------------------------------
-	a b <(T)(F)(4!5#2+#@)@
+	(a b <)@(T)(F)(4!5#2+#@)@
 Funktioniert prinizipiell mit <, > und =, wobei letzteres auch auf ()-Ausdrücke
 Achtung: wenn a und b Zahlen: Leerzeichen!
 
@@ -74,7 +74,15 @@ CHECKs
 Einfache Ausgaben:
 ==================
 "Error": 69 0$114 1$ 114 2$ 111 3$ 114 4$
+"Prim": (80 0$ 114 1$ 105 2$ 109 3$)@
+"Nicht Prim": (78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@
 
+
+Prinzip:
+[Termination condition]
+[True-Zweig]
+[False-Zweig]
+[
 
 Ausgabe eines Strings in Klammer:
 =================================
@@ -181,3 +189,46 @@ else
 
 printChar("String", 0)
 
+
+
+1 2 4 6 10 16 ... < 1000
+
+
+a1 a2
+print (a1 a2)
+	if a2 < 1000
+		printout a1
+		print (a2 a1+a2)
+	else
+		return
+end
+
+A: (3!3!1- 2!1=()5!C@3#*)
+C: (4!5#2+#@)
+3 ^A3!4#3!@3#
+
+3 Faktorielle:
+--------------
+3(3!3!1- 2!1=()5!(4!5#2+#@)@3#*)3!4#3!@3#
+
+
+3#* ist die Verknüpfung (oder?)
+
+Der if-then-else nimmt den Wahrheitswert vorher weg!
+0(T)(F)(4!5#2+#@)@
+
+a1 a2
+duplicate a2
+Test a2<1000
+T: 2!1000<()(3!4!+)(4!5#2+#@)
+F: ()
+
+
+(2!1000<(3!3!+)()(4!5#2+#@)@)4!5#4!5#4!@3#
+
+
+
+
+
+
+3!4#3!4#

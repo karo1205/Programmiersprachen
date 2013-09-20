@@ -38,7 +38,7 @@ public class CalcInputList implements ICalcInputList {
 			char nextChar = ' ';
 	
 			// read over trailing whitespaces
-			while ((nextChar == ' ') && list.length() > 0) {
+			while ((isWhiteSpace(nextChar)) && list.length() > 0) {
 				nextChar = getNextChar();
 			}
 			
@@ -56,6 +56,10 @@ public class CalcInputList implements ICalcInputList {
 		}
 	}
 
+	boolean isWhiteSpace(char toCheck) {
+		return (toCheck == ' ' || toCheck == '\t');
+	}
+	
 	@Override
 	public void pushElement(String element) {
 		list = new StringBuilder(element).append(list).toString();
