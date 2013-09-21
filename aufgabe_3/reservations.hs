@@ -23,9 +23,9 @@ type Trains = Map.Map TrainID Train
 type Stations = Map.Map StationID Station
 type Reservations = Map.Map TrainID [Reservation]
 type Crossings = [StationID]
+type Station = String
 
 data Car = Car CarID TrainID Seats  deriving (Show, Read)
-data Station = Station Name | NilStation deriving (Show, Read)
 data Reservation = Reservation ReservationID CarID [SeatID] From To deriving (Show,Read)
 data Train = Train Name [Car] [StationID] MinSeats | NilTrain deriving (Show, Read)
 
@@ -40,11 +40,13 @@ main = do
 usage :: IO()
 usage = do
         putStrLn "help/?: Print this text"
-        putStrLn "print_stations: Display list of stations"
-        putStrLn "print_stations_v: Display list of stations including trains stopping there"
-        putStrLn "print_trains: Display list of trains"
-        putStrLn "print_trains_v: Display list of trains (verbose)"
-        putStrLn "print_route: Display train connections serving a certain route"
+        putStrLn "list_stations: Display list of stations"
+        putStrLn "list_stations_v: Display list of stations including trains stopping there"
+        putStrLn "list_trains: Display list of trains"
+        putStrLn "list_trains_v: Display list of trains (verbose)"
+        putStrLn "list_route station1 station2: Display train connections between station1 and station2"
+        putStrLn "list_reservations: Display list of reservations"
+        putStrLn "max_reservations station1 station2: List maximum group size between station1 and station2"
         putStrLn "quit: Quit program"
 
 handleInput :: ReservationData -> IO()
@@ -54,11 +56,12 @@ handleInput (ts,ss,cs,rs) = do
     case ( head (words input) ) of
         "help" -> usage
         "?" -> usage
-        "print_stations" -> printStations ss ts
-        "print_stations_v" -> printStations' ss ts cs
-        "print_trains" -> printTrains ts
-        "print_trains_v" -> printTrains' ts ss
-        "print_route" -> printRoute ts cs (tail $ words input)
+        "list_stations" -> printStations ss
+        "list_stations_v" -> printStations' ss ts cs
+        "list_trains" -> printTrains ts
+        "list_trains_v" -> printTrains' ts ss
+        "list_route" -> printRoute ts ss cs (tail $ words input)
+        "list_route_d" -> printRoute_d ts ss cs (tail $ words input)
         "quit" -> quit (ts,ss,cs,rs)
         _ -> usage
     handleInput (ts,ss,cs,rs)
@@ -73,13 +76,13 @@ quit resData = do
     writeFile "data.txt" (show resData)
     exitSuccess
 
-printStations :: Stations -> Trains -> IO()
-printStations ss ts
+printStations :: Stations -> IO()
+printStations ss
     | Map.null ss = putStrLn "No stations found"
-    | otherwise   = putStrLn $ "Stations: "++stationNames
-    where stationNames = intercalate ", " $ getStationNames (map (getStationByID ss) stationIDs)
-          stationIDs   = map fst stations
-          stations     = Map.toList ss
+    | otherwise   = putStrLn $ intercalate ", " $ map (printStation) $ Map.toAscList ss
+
+printStation :: (StationID,Station) -> String
+printStation (sid,sname) = sname++" (#"++(show sid)++")"
 
 printStations' :: Stations -> Trains -> Crossings -> IO()
 printStations' ss ts cs
@@ -89,11 +92,10 @@ printStations' ss ts cs
         putStrLn $ init $ unlines (map (printStation' ss ts cs) (Map.toAscList ss))
 
 printStation' :: Stations -> Trains -> Crossings -> (ID,Station) -> String
-printStation' ss ts cs (_,NilStation) = "NilStation should not occur!\n"
-printStation' ss ts cs (i,Station n)  = "Station #"++show i++" '"++n++"'"++crossing++"\n"++trainString++"\n"
+printStation' ss ts cs (i,n)  = "Station #"++show i++" '"++n++"'"++crossing++"\n"++trainString
 	where crossing    = if elem i cs then " - Crossing" else ""
               trains      = getTrainsStoppingAt ts i
-              trainString = show trains
+              trainString = unlines $ map(printTrain.getTrainByID ts) trains
 
 printTrains :: Trains -> IO()
 printTrains ts
@@ -119,16 +121,26 @@ printTrain' ss (i,t)        = printTrain (i,t)++"\n"++cars++"\n"++route++"\n"++s
               else "\tCars:"++(intercalate "," (map carInfo cs));
           route                = if null r
               then "\tNo stations" 
-              else "\tRoute: "++ (intercalate "," $ getStationNames (map (getStationByID ss) r))
+              else "\tRoute: "++ (intercalate "," $ map (printStation) $ map(getStationByID ss) r)
           seats                = "\tNon-reservable seats: "++(show minseats)
           carInfo (Car i _ ss) = " #"++show i++" ("++show ss++" seats)"
-	
-printRoute :: Trains -> Crossings -> [String] -> IO()
-printRoute ts cs r = do
-    if (length r) /= 2 
-        then putStrLn "Correct syntax: print_route station1 station2"
-        else print $ trainsServingRoute ts cs (fst route) (snd route)
+
+printRoute_d :: Trains -> Stations -> Crossings -> [String] -> IO()
+printRoute_d ts ss cs r = putStrLn $ show (getRoutes ts cs (fst route) (snd route))
     where route = printRoute' r
+
+printRoute :: Trains -> Stations -> Crossings -> [String] -> IO()
+printRoute ts ss cs r
+    | length r /= 2 = putStrLn "Correct syntax: print_route station1 station2"
+    | route == (-1,-1) = putStrLn "Invalid station IDs (check list_stations)"
+    | routes == [[]] = putStrLn "No routes found"
+    | otherwise = do
+        putStrLn "Possible routes:"
+        putStrLn $ init.unlines $ concat $ map (["----"]++) $ map(map(routeData)) routes
+        putStrLn "----"
+    where route   = printRoute' r
+          routes  = getRoutes ts cs (fst route) (snd route)
+          routeData (f,t,tid) = (printTrain (getTrainByID ts tid)) ++ " from: "++(printStation (getStationByID ss f))++" to: "++(printStation (getStationByID ss t))
 
 printRoute' :: [String] -> (From,To)
 printRoute' route
@@ -141,7 +153,7 @@ printRoute' route
 getStationByID :: Stations -> StationID -> (StationID,Station)
 getStationByID ss i
     | Map.member i ss = (i,ss Map.! i)
-    | otherwise       = (0,NilStation)
+    | otherwise       = (-1,"")
 
 getStationByID' :: Stations -> StationID -> Station
 getStationByID' ss i = snd (getStationByID ss i)
@@ -155,46 +167,43 @@ getTrainsStoppingAt :: Trains -> StationID -> [TrainID]
 getTrainsStoppingAt ts s = Map.keys $ Map.filter(stops) ts
     where stops (Train _ _ ss _) = elem s ss
 
-getStationNames :: [(StationID,Station)] -> [String]
-getStationNames []                  = []
-getStationNames ((_,NilStation):ss) = getStationNames ss
-getStationNames ((i,Station n):ss)  = [n++" (#"++(show i)++")"] ++ getStationNames ss
-
 getTrainNames :: [(TrainID,Train)] -> [String]
 getTrainNames []                     = []
 getTrainNames ((0,NilTrain):ts)      = getTrainNames ts
 getTrainNames ((i,Train n _ _ _):ts) = [n++" (#"++(show i)++")"] ++ getTrainNames ts
 
-trainsServingRoute :: Trains -> Crossings -> From -> To -> [[(From,To,TrainID)]]
-trainsServingRoute ts cs f t 
+getRoutes :: Trains -> Crossings -> From -> To -> [[(From,To,TrainID)]]
+getRoutes ts cs f t 
     | routes == [[]] = routes
     | otherwise = delete [] $ routes
-    where routes = nub $ directConnection ts f t ++ inDirectConnections ts cs f t
+    where routes = nub $ directConnections ts f t ++ inDirectConnections ts cs f t
 
-directConnection :: Trains -> From -> To -> [[(From,To,TrainID)]]
-directConnection ts f t = [zip3 (repeat f) (repeat t) (Map.keys servingTrains)]
+directConnections :: Trains -> From -> To -> [[(From,To,TrainID)]]
+directConnections ts f t = group $ zip3 (repeat f) (repeat t) (Map.keys servingTrains)
     where servingTrains = Map.filter (servesRoute f t) ts
 
 inDirectConnections :: Trains -> Crossings -> From -> To -> [[(From,To,TrainID)]]
 inDirectConnections ts cs f t 
     | f == t        = [[]]
+    | null initialRoutes = [[]]
     | null $ head initialRoutes = [[]]
     | otherwise          = concat $ map (inDirectConnections' ts cs t) initialRoutes
-    where initialRoutes = concat $ map (directConnection ts f) cs
+    where initialRoutes = concat $ map (directConnections ts f) cs
 
 inDirectConnections' :: Trains -> Crossings -> StationID -> [(From,To,TrainID)] -> [[(From,To,TrainID)]]
 inDirectConnections' ts cs finalStation routeSoFar
     | null routeSoFar = [[]]
     | trainTwice = [[]]
-    | done           = [routeSoFar]
+    | null newRoutes = [[]]
     | null $ head newRoutes = [[]]
+    | done           = [routeSoFar]
     | otherwise      = concat $ map (inDirectConnections' ts cs finalStation) (map (routeSoFar ++) $ newRoutes)
     where
         done          = lastStop == finalStation
         lastStop      = (\(_,t,_) -> t ) $ last routeSoFar
         trainTwice    = (\x -> (length $ nub x) /= (length x)) $ map (\(_,_,tid) -> tid) routeSoFar
         possibleStops = (cs \\ ((map (\(f,_,_) -> f) routeSoFar)++[lastStop])) ++ [finalStation]
-        newRoutes     =  concat $ map (directConnection ts lastStop) possibleStops
+        newRoutes     =  concat $ map (directConnections ts lastStop) possibleStops
 
 servesRoute :: From -> To -> Train -> Bool
 servesRoute f t (Train _ _ ss _)
