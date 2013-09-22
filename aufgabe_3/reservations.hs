@@ -178,7 +178,7 @@ printGroup (ts,ss,cs,rs) input
 -- get total free seats, reservable free seats and max group size
 printGroup' :: ReservationData -> [[(From,To,TrainID)]] -> Int -> String
 printGroup' _ _ 0 = "Invalid route selected"
-printGroup' (ts,ss,cs,rs) routes i = if i < (length routes)
+printGroup' (ts,ss,cs,rs) routes i = if i <= (length routes)
     then "Total: "++(show total)++"\nReservable: "++(show avl)++"\nBiggest group: "++(show group)
     else "Invalid route selected"
     where r     = routes !! (i-1)
