@@ -4,7 +4,7 @@ import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
 
 /**
  * Interface for the Display-implementation of the Calculator<br>
- * The Display has n rows with m characters fields. Each field can hold exactly one character and is to be set indenpendently. 
+ * The Display has n rows with m characters fields. Each field can hold exactly one character and is to be set independently. 
  * The default size is 4 rows and 64 columns and are indexed beginning with 0. 
  * The index (0/0) belongs to the right bottom field
  * 
@@ -16,8 +16,8 @@ public interface ICalcDisplay {
 
 	/**
 	 * Displays the given character at the given position determined by the index unmber. <br>
-	 * The lower right field has index number 0, the one to the left number 1 and so on until <i>rows</i>-1.<br>
-	 * The leftmost field of the next row (if present) has index <i>rows</i> and so on.<br> 
+	 * The upper left field has index number 0, the one to the right number 1 and so on until <i>rows</i>-1.<br>
+	 * The rightmost field of the next row (if present) has index <i>rows</i> and so on.<br> 
 	 * If the position is out of range it will throw a CalcIndexOutOfRangeException
 	 * @param row
 	 * @param column
