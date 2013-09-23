@@ -46,9 +46,12 @@ usage = do
         putStrLn "list_stations_v: Display list of stations including trains stopping there"
         putStrLn "list_trains: Display list of trains"
         putStrLn "list_trains_v: Display list of trains (verbose)"
-        putStrLn "list_route station1 station2: Display train connections between station1 and station2"
-        putStrLn "list_seat trainid carid seatid: Display list of reservations for this seat"
-        putStrLn "max_reservations station1 station2: List information about possible reservations between station1 and station2"
+        putStrLn "list_route from to: Display train connections between 'from' and 'to'"
+        putStrLn "list_seat train car seat: Display list of reservations for seat #'seats' in car #'car' of train #'train'"
+        putStrLn "list_reservation id: Display reservation data for reservation #'id'"
+        putStrLn "max_reservations from to: List information about possible reservations between 'from' and 'to'"
+        putStrLn "add_reservation from to route seats: Add reservation between 'from' and 'to', using route #'route', for a group of 'seats' passengers"
+        putStrLn "del_reservation id: Delete reservation with given ID"
         putStrLn "quit: Quit program and save data"
 
 -- Get line, choose function to call
@@ -65,14 +68,17 @@ handleInput old = do
         "list_trains" -> printTrains ts
         "list_trains_v" -> printTrains' ts ss
         "list_route" -> printRoute ts ss cs (tail $ words input)
+        "list_seat" -> printReservations old (tail $ words input)
+        "list_reservation" -> printReservation old (tail $ words input)
         "max_reservations" -> printGroup old (tail $ words input)
         "add_reservation" -> printReservationPossible old (tail $ words input)
-        "list_seat" -> printReservations old (tail $ words input)
+        "del_reservation" -> printDelReservationPossible old (tail $ words input)
         "d" -> d ts ss cs rs (tail $ words input)
         "quit" -> quit old
         _ -> usage
     let after = case (head (words input))  of
             "add_reservation" -> addReservation old (tail $ words input)
+            "del_reservation" -> delReservation old (tail $ words input)
             _ -> old
     handleInput after
     where (ts,ss,cs,rs) = old
@@ -193,6 +199,28 @@ printGroup' (ts,ss,cs,rs) routes i = if i <= (length routes)
           avl   = map (\(t,m)->t-m) $ zip total min
           group = map ((\(_,seats)->length seats).(\(m,f)->getBiggestGroup m f)) $ zip min free
 
+printReservation :: ReservationData -> [String] -> IO()
+printReservation (ts,ss,cs,rs) input
+    | (length input) /= 1 = putStrLn "Invalid numer of arguments"
+    | null conv = putStrLn "Invalid arguments"
+    | all(null.snd) filtered = putStrLn "Invalid reservation ID"
+    | otherwise = do
+        putStrLn $ "Reservation #"++(show rid)
+        if ((length output)==1)
+            then putStrLn $ (head output)
+            else putStrLn $ init.unlines $ output
+    where conv     = convertDec input
+          rid      = head conv
+          output   = filter(""/=) $ map (printReservation' ss) $ map (\(tid,res) -> ((getTrainByID ts tid),res)) $ filtered
+          filtered = filterRes rs rid
+
+printReservation' :: Stations -> ((TrainID,Train),[Reservation]) -> String
+printReservation' ss (t,res)
+    | null res = ""
+    | (length res) == 1 = "\t"++(printTrain t)++": "++resInfo ss (head res)
+    | otherwise = "\t"++(printTrain t)++":\n"++(concat $ map(resInfo ss) res)
+    where resInfo ss (Reservation rid cid seats f t) = "Car #"++(show cid)++", "++(show $ length seats)++" seats, from "++(printStation $ getStationByID ss f) ++ " to "++(printStation $ getStationByID ss t)
+
 -- convert input and call printReservations'
 printReservations :: ReservationData -> [String] -> IO()
 printReservations res input
@@ -217,6 +245,15 @@ printReservationPossible res input
     | otherwise = putStrLn "This reservation is not possible."
     where possible = reservationPossible res input
 
+printDelReservationPossible :: ReservationData -> [String] -> IO()
+printDelReservationPossible (ts,ss,cs,rs) input
+    | (length input) /= 1 = putStrLn "Wrong number of arguments"
+    | null conv = putStrLn "Invalid arguments"
+    | all(null.snd) res = putStrLn "Invalid reservation ID"
+    | otherwise = putStrLn "Reservation deleted"
+    where conv = convertDec input
+          res  = filterRes rs (head conv)
+
 addReservation :: ReservationData -> [String] -> ReservationData
 addReservation res input
     | not possible = res
@@ -234,6 +271,14 @@ addReservation' res input = (ts,ss,cs,newrs (zip route toAdd))
           toAdd           = map (\(cid,s)->(cid,take seats s)) $ map (\(m,f)->getBiggestGroup m f) $ zip min free
           newrs r         = foldl (addReservationFold) rs $ map (\((f,t,tid),(cid,seats))->(tid,(Reservation nextID cid seats f t))) r
           nextID          = (1+).maximum.concat $ map(map(\(Reservation id _ _ _ _)->id)) $ Map.elems rs
+
+delReservation :: ReservationData -> [String] -> ReservationData
+delReservation old input
+    | (length input) /= 1 = old
+    | null conv = old
+    | otherwise = (ts,ss,cs,Map.map(filter(\(Reservation id _ _ _ _) -> id /= (head conv))) rs)
+    where (ts,ss,cs,rs) = old
+          conv = convertDec input
 
 addReservationFold :: Reservations -> (TrainID,Reservation) -> Reservations
 addReservationFold rs (tid,r) = Map.insertWith(++) tid  [r] rs
@@ -258,10 +303,10 @@ reservationPossible' res (f,t) ri s
           min           = map((\(tid,Train _ _ _ min)->min).(\(_,_,tid)->getTrainByID ts tid)) route
           free          = map (getFreeSeatsSegment rs.(\(f,t,tid)->(f,t,getTrainByID ts tid))) route
           group         = map ((\(_,seats)->length seats).(\(m,f)->getBiggestGroup m f)) $ zip min free
-          
 
---addReservation' :: ReservationData -> [Int] -> (ReservationData,String)
---    | 
+filterRes :: Reservations -> ID -> [(TrainID,[Reservation])]
+filterRes rs rid = map(\(tid,res) -> (tid,filter(\(Reservation id _ _ _ _)->id == rid) res)) $ Map.toAscList rs
+
 
 -- convert input Strings to Int, returns [] if any input cannot be parsed
 convertDec :: [String] -> [Int]
