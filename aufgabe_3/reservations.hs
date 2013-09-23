@@ -54,7 +54,7 @@ usage = do
 -- Get line, choose function to call
 -- Rinse, repeat
 handleInput :: ReservationData -> IO()
-handleInput (ts,ss,cs,rs) = do
+handleInput old = do
     putStrLn ">> "
     input <- getLine
     case ( head (words input) ) of
@@ -65,12 +65,17 @@ handleInput (ts,ss,cs,rs) = do
         "list_trains" -> printTrains ts
         "list_trains_v" -> printTrains' ts ss
         "list_route" -> printRoute ts ss cs (tail $ words input)
-        "max_reservations" -> printGroup (ts,ss,cs,rs) (tail $ words input)
-        "list_seat" -> printReservations (ts,ss,cs,rs) (tail $ words input)
+        "max_reservations" -> printGroup old (tail $ words input)
+        "add_reservation" -> printReservationPossible old (tail $ words input)
+        "list_seat" -> printReservations old (tail $ words input)
         "d" -> d ts ss cs rs (tail $ words input)
-        "quit" -> quit (ts,ss,cs,rs)
+        "quit" -> quit old
         _ -> usage
-    handleInput (ts,ss,cs,rs)
+    let after = case (head (words input))  of
+            "add_reservation" -> addReservation old (tail $ words input)
+            _ -> old
+    handleInput after
+    where (ts,ss,cs,rs) = old
 
 -- data.txt needs to contain a valid result of 'show ReservationData'
 loadData :: IO ReservationData
@@ -205,6 +210,58 @@ printReservations' (ts,ss,cs,rs) [tid,cid,sid]
     where res    = [(rid,f,t) | (Reservation rid rcid seats f t) <- (rs Map.! tid), rcid == cid, elem sid seats]
           name s = (getStationName ss s) ++ "(#"++(show s)++")"
           output = map(\(rid,f,t)->"Reservation #"++(show rid)++", from "++(name f)++" to "++(name t)) 
+
+printReservationPossible :: ReservationData -> [String] -> IO()
+printReservationPossible res input
+    | possible  = putStrLn "Reservation added."
+    | otherwise = putStrLn "This reservation is not possible."
+    where possible = reservationPossible res input
+
+addReservation :: ReservationData -> [String] -> ReservationData
+addReservation res input
+    | not possible = res
+    | otherwise = addReservation' res input
+    where possible = reservationPossible res input
+
+addReservation' :: ReservationData -> [String] -> ReservationData
+addReservation' res input = (ts,ss,cs,newrs (zip route toAdd))
+    where [f,t,rid,seats] = convertDec input
+          routes          = getRoutes ts cs f t
+          route           = routes !! (rid-1)
+          (ts,ss,cs,rs)   = res
+          min             = map((\(tid,Train _ _ _ min)->min).(\(_,_,tid)->getTrainByID ts tid)) route
+          free            = map (getFreeSeatsSegment rs.(\(f,t,tid)->(f,t,getTrainByID ts tid))) route
+          toAdd           = map (\(cid,s)->(cid,take seats s)) $ map (\(m,f)->getBiggestGroup m f) $ zip min free
+          newrs r         = foldl (addReservationFold) rs $ map (\((f,t,tid),(cid,seats))->(tid,(Reservation nextID cid seats f t))) r
+          nextID          = (1+).maximum.concat $ map(map(\(Reservation id _ _ _ _)->id)) $ Map.elems rs
+
+addReservationFold :: Reservations -> (TrainID,Reservation) -> Reservations
+addReservationFold rs (tid,r) = Map.insertWith(++) tid  [r] rs
+
+reservationPossible :: ReservationData -> [String] -> Bool
+reservationPossible res input
+    | (length input) /= 4 = False
+    | null conv = False
+    | otherwise = reservationPossible' res (f,t) r s
+    where conv      = convertDec input
+          [f,t,r,s] = conv
+
+reservationPossible' :: ReservationData -> (From,To) -> Int -> Seats -> Bool
+reservationPossible' res (f,t) ri s
+    | routes == [[]] = False
+    | (length routes) < ri = error $ "wrong route index " ++ (show ri) ++"/"++(show (length routes))
+    | any(s>) group = False
+    | otherwise = True
+    where routes        = getRoutes ts cs f t
+          route         = routes !! (ri-1)
+          (ts,ss,cs,rs) = res
+          min           = map((\(tid,Train _ _ _ min)->min).(\(_,_,tid)->getTrainByID ts tid)) route
+          free          = map (getFreeSeatsSegment rs.(\(f,t,tid)->(f,t,getTrainByID ts tid))) route
+          group         = map ((\(_,seats)->length seats).(\(m,f)->getBiggestGroup m f)) $ zip min free
+          
+
+--addReservation' :: ReservationData -> [Int] -> (ReservationData,String)
+--    | 
 
 -- convert input Strings to Int, returns [] if any input cannot be parsed
 convertDec :: [String] -> [Int]
@@ -362,7 +419,7 @@ d :: Trains -> Stations -> Crossings -> Reservations -> [String] -> IO()
 d ts ss cs rs r = do
     putStrLn "Free seats"
     putStrLn $ show seats
-    putStrLn $ "Total: "++ (show $ sum $ map (length.snd) seats)
+    putStrLn $ "Free seats: "++ (show $ sum $ map (length.snd) seats)
     putStrLn $ "Biggest group: "++(show group)
     where route = convertFromTo r
           seats = getFreeSeatsSegment rs (fst route,snd route,getTrainByID ts 1)
