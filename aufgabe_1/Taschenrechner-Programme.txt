@@ -44,8 +44,6 @@ Holen des n-ten Elementes an die erste Stelle (erste wird zur zweiten)
 ----------------------------------------------------------------------
 	(n+1)!(n+2)#
 
-
-
 If (a Vergleich b) then T else F
 --------------------------------
 	(a b <)@(T)(F)(4!5#2+#@)@
@@ -58,32 +56,6 @@ Achtung: wenn a und b Zahlen: Leerzeichen!
 	(abc)(abc)=(T)(F)(4!5#2+#@)@ 	(Ergibt T)
 
 
-
-Testaufgabe 1:
-==============
-(Text) Zeile (Display)
-
-(abcde)2!0?0$
-
-
-CHECKs
-------
-(Error)0?
-()0?
-
-Einfache Ausgaben:
-==================
-"Error": 69 0$114 1$ 114 2$ 111 3$ 114 4$
-"Prim": (80 0$ 114 1$ 105 2$ 109 3$)@
-"Nicht Prim": (78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@	
-
-
-Prinzip:
-[Termination condition]
-[True-Zweig]
-[False-Zweig]
-[
-
 Ausgabe eines Strings in Klammer:
 =================================
 Anfangsbedingung: 
@@ -91,18 +63,14 @@ Stack: auzugebender String
 
 Eingabe:
 (Sieben Geislein stehen auf der Wiese und aesen vor sich hin...) 
-0(3!3!?(2!1~=)@(2#2#)(3!$1+ 4!@)(4!5#2+#@)@)4!4!6#5#4!@
+0(3!3!?(2!1~=)@(2#2#3#)(3!$1+ 4!@)(4!5#2+#@)@)4!4!6#5#4!@
 
 Wobei (Sieben...) am Stack ist und die zweite Zeile die eigentliche formel darstellt
 
 
 
-
-
-
-
-Versuch: Näherung der Qudratwurzel
-==================================
+Näherung der Qudratwurzel
+=========================
 Näherungsformel der Wurzel (ca formel von Heron)
 i = 0;
 while(i < 10)
@@ -113,99 +81,67 @@ while(i < 10)
 }
 xn = xn + 1;
 
-(2!2/2!)@				Errechnet Stack/2 und setzt es on top of the stack
-(3!3!/3!2/+ 2+ 3#)@		Errechnet einen Durchlauf der obigen while-Schleife
+Stackprogramm für Näherung Q-Wurzel:
+====================================
+1000
+0 3!2/((3!9>)@(3#1+ 4#)(2!2/5!4!/+2++ 3#3!1+ 3!4#4#5!@)(4!5#2+#@)@)5!5!5!8#7#6#5!@
 
- 1000  (2!2/)@  				|Vorberechnung
-(4!10<)							|logischer Vergleich (i<10?)
-((4!1+ 5#4!5#4!5#)				|Erhöhe i um 1 und setzt wieder an erste Stelle
-(2!4!3!/3!2/+ 2+ 3#)@3#)		|Wahrzweig
-(1+)							|Falschzweig: xn=xn+1
-(4!5#2+#@)@						|if_then_else
-
-(9)(9~)(4!5#2+#@)@
-
-
-0 1000 5000 (T)(T)(T)(F)@@@@
-
-
-Iterativ --> Rekursiv
-=====================
-i=0
-while (i<10)
-	i++
-	xn=zahl/xn+xn/2+2
-end
-
----
-
-i=0
-xn=zahl/2
-function (zahl, i, xn)
-if < 10
-	return function(zahl, i+1, zahl/xn+xn/2+2)
-end
-else return xn
-
-function(zahl,0,zahl/2)
+Nacher stehen am Stack: zahl xn
 
 
 
-String-output (itertiv-->rekursiv
-=================================
-i=0
-while getChar(String, i) != -1
-	ouput(i, char(i))
-end
+Primzahlentest:
+===============
 
-----
+Einfache Ausgaben:
+==================
+"Error": 69 0$114 1$ 114 2$ 111 3$ 114 4$
+"Prim": (80 0$ 114 1$ 105 2$ 109 3$)@
+"Nicht Prim": (78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@	
 
-function printChar(string i)
-if (getChar(String, i) != -1)
-	ouput(i, char(i))
-	printChar(string, i++)
-else	
-	return
+am Stack sind zahl xn
+1. schritt: Versuch der division durch 2
+true --> nicht prim
 
-printChar("String", 0)
+false
+divisor = 3
+rest=1
+while (rest=zahl % divisor != 0 && divisor < xn)
+	xn =xn +2
 
+if (rest == 0)
+	print "Nicht Prim"
+else
+	print "Prim"	
 
+1. Division durch 2
+3!2%0=((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@)(LOOP)(4!5#2+#@)@
 
-1 2 4 6 10 16 ... < 1000
+LOOP:
+3
+(3!3!<)@(T)((80 0$ 114 1$ 105 2$ 109 3$)@)(4!5#2+#@)@
+T: (3!3!%0>)@(T2)((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@)(4!5#2+#@)@
+T2: 2+
 
+Ergibt: 
+(3!3!>)@((4!3!%0>)@(2+)((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@)(4!5#2+#@)@)((80 0$ 114 1$ 105 2$ 109 3$)@)(4!5#2+#@)@
 
-a1 a2
-print (a1 a2)
-	if a2 < 1000
-		printout a1
-		print (a2 a1+a2)
-	else
-		return
-end
+Eingebaut ins "rundherum-Formel drehen":
+----------------------------------------
+3((3!3!>)@((4!3!%0>)@(2+ 5!@)((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@2#2#3#)(4!5#2+#@)@)((80 0$ 114 1$ 105 2$ 109 3$)@2#2#3#)(4!5#2+#@)@) 5!5!5!8#7#6#5!@
 
-A: (3!3!1- 2!1=()5!C@3#*)
-C: (4!5#2+#@)
-3 ^A3!4#3!@3#
+Eingesetzt als LOOP:
+3!2%0=((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@)(3((3!3!>)@((4!3!%0>)@(2+ 5!@)((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@2#2#3#)(4!5#2+#@)@)((80 0$ 114 1$ 105 2$ 109 3$)@2#2#3#)(4!5#2+#@)@) 5!5!5!8#7#6#5!@)(4!5#2+#@)@
 
-3 Faktorielle:
---------------
-3(3!3!1- 2!1=()5!(4!5#2+#@)@3#*)3!4#3!@3#
+Vollständiger Algorithmus:
+=========================================================
+Zahl - Näherung Quadratwurzel - Primtest
 
+copy past ab hier ;-)
+--------------------------
+1000
+0 3!2/((3!9>)@(3#1+ 4#)(2!2/5!4!/+2++ 3#3!1+ 3!4#4#5!@)(4!5#2+#@)@)5!5!5!8#7#6#5!@
+3!2%0=((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@)(3((3!3!>)@((4!3!%0>)@(2+ 5!@)((78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@2#2#3#)(4!5#2+#@)@)((80 0$ 114 1$ 105 2$ 109 3$)@2#2#3#)(4!5#2+#@)@) 5!5!5!8#7#6#5!@)(4!5#2+#@)@
 
-3#* ist die Verknüpfung (oder?)
-
-Der if-then-else nimmt den Wahrheitswert vorher weg!
-0(T)(F)(4!5#2+#@)@
-
-a1 a2
-duplicate a2
-Test a2<1000
-T: 2!1000<()(3!4!+)(4!5#2+#@)
-F: ()
-
-1 2 (2!1000<(3!3!+)()(4!5#2+#@)@)4!5#4!5#4!@5!6#
-
-4!5#4!5#4!@5!6#
-(String)
 
 
