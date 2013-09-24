@@ -1,6 +1,7 @@
 package proglang.java.calculator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Main Class
@@ -19,6 +20,10 @@ class Calculator implements ActionListener
 	private ICalcContext context = null;
 	private CalculatorGUI cGui;
 	private final String defaultMessage = "Enter formula and press Enter";
+	private String inputBuffer;
+	enum ModeType { NORMAL, CONT };
+	ModeType mode;
+	private int openCount;
 
 	/**
 	 * Calculator main method.
@@ -58,7 +63,6 @@ class Calculator implements ActionListener
 	 * Initializes all data used by the calculator 
 	 */
 	private void initCalculator() {
-		
 		cGui = new CalculatorGUI(this);
 		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui, calcRows, calcCols));
 		cGui.setVisible(true);
@@ -123,14 +127,80 @@ class Calculator implements ActionListener
 		context.getInputList().clear();
 		cGui.clearAll();
 		cGui.setCommentLineText(defaultMessage);
+		this.mode = mode.NORMAL;
+		resetInputBuffer();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-        if ("enter".equals(e.getActionCommand())) {
-        	runInputField();
-        	cGui.setFocus();
-        } else {
+        if ("clear".equals(e.getActionCommand())) {
         	clearAll();
+        	cGui.setFocus();
         }
     }
+
+	private void resetInputBuffer() {
+		inputBuffer = "";
+		openCount = 0;
+	}
+
+	public void keyPressed(KeyEvent ev, String completeInput) {
+		char key = ev.getKeyChar();
+		System.out.println("key pressed: '"+key+"'");
+		if(Character.isISOControl(key)) {
+			System.out.println("Meta-Key ignored");
+		} else {
+			if(mode == mode.NORMAL ) {
+				if(Character.isDigit(key)) {
+					inputBuffer+=key;
+				} else if(key=='(') {
+					if(inputBuffer.startsWith("(")) {
+						inputBuffer+="(";
+					} else {
+						run(inputBuffer);
+						inputBuffer = "(";
+					}
+					openCount++;
+				} else if(key==')') {
+					switch(openCount) {
+						case 0:
+							run(inputBuffer);
+							run(")");
+							resetInputBuffer();
+							break;
+						case 1:
+							run(inputBuffer+")");
+							resetInputBuffer();
+							break;
+						default:
+							inputBuffer+=")";
+								openCount--;
+					}
+				} else if (openCount > 0) {
+					inputBuffer += key;
+				} else if(key=='"') {
+					run(inputBuffer);
+					resetInputBuffer();
+					mode = mode.CONT;
+					cGui.switchMode();
+				} else {
+					run(inputBuffer+key);
+					resetInputBuffer();
+				}
+			} else {
+				if(key=='\'') {
+					run("("+completeInput+")");
+					mode = mode.NORMAL;
+					cGui.switchMode();
+				}
+			}
+		}
+		if(ev.getKeyCode()==KeyEvent.VK_ENTER) {
+			run("("+completeInput+")");
+		}
+		System.out.println("inputbuffer: '"+inputBuffer+"'");
+	}
+
+	public ModeType getMode() {
+		return mode;
+	}
 }
