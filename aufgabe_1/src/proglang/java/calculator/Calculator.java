@@ -188,6 +188,7 @@ class Calculator implements ActionListener
 				}
 			} else {
 				if(key=='\'') {
+					completeInput = completeInput.replace("\"", "");	// remove the "
 					run("("+completeInput+")");
 					mode = mode.NORMAL;
 					cGui.switchMode();
