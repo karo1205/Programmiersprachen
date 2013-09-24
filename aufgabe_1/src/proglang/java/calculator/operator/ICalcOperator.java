@@ -1,6 +1,6 @@
 package proglang.java.calculator.operator;
 import proglang.java.calculator.ICalcContext;
-import proglang.java.calculator.exception.*;
+import proglang.java.calculator.exception.CalcException;
 
 /**
  * Base Class for all operators of the Calculator.<br>
