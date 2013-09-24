@@ -1,8 +1,8 @@
-module Main where
+module Main(main) where
 
 import System.Exit
 import qualified Data.Map.Lazy as Map
-import Data.List(intercalate,elemIndex,elemIndices,(\\),nub,delete,group,sortBy)
+import Data.List(sort,intercalate,elemIndex,elemIndices,(\\),nub,delete,group,sortBy)
 import Data.Maybe
 import Data.Ord
 import Numeric(readDec)
@@ -71,6 +71,7 @@ handleInput old = do
         "list_seat" -> printReservations old (tail $ words input)
         "list_reservation" -> printReservation old (tail $ words input)
         "max_reservations" -> printGroup old (tail $ words input)
+        "min_max_seats" -> printMinMax old (tail $ words input)
         "add_reservation" -> printReservationPossible old (tail $ words input)
         "del_reservation" -> printDelReservationPossible old (tail $ words input)
         "d" -> d ts ss cs rs (tail $ words input)
@@ -160,7 +161,7 @@ printRoute ts ss cs r
     | routes == [[]] = putStrLn "No routes found"
     | otherwise = do
         putStrLn "Possible routes:"
-        putStrLn $ init.unlines.concat$ map(addHeader) $ zip [1..] $ map(map(("\t"++).(printRoute' ts ss))) routes
+        putStrLn $ init $ unlines.concat $ map(addHeader) $ zip [1..] $ map(map(("\t"++).(printRoute' ts ss))) routes
     where route   = convertFromTo r
           routes  = getRoutes ts cs (fst route) (snd route)
           addHeader = (\(no,text)-> ["Route "++(show no)++":"]++text)          
@@ -189,15 +190,45 @@ printGroup (ts,ss,cs,rs) input
 -- get total free seats, reservable free seats and max group size
 printGroup' :: ReservationData -> [[(From,To,TrainID)]] -> Int -> String
 printGroup' _ _ 0 = "Invalid route selected"
-printGroup' (ts,ss,cs,rs) routes i = if i <= (length routes)
-    then "Total: "++(show total)++"\nReservable: "++(show avl)++"\nBiggest group: "++(show group)
-    else "Invalid route selected"
+printGroup' (ts,ss,cs,rs) routes i
+    | i <= (length routes) = "Total: "++(show total)++"\nReservable: "++(show avl)++"\nBiggest group: "++(show group)
+    | otherwise            = "Invalid route selected"
     where r     = routes !! (i-1)
           free  = map(getFreeSeatsSegment rs) $ map(\(f,t,tid)->(f,t,getTrainByID ts tid)) r
           total = map(getSeatSum) free
           min   = map((\(tid,Train _ _ _ min)->min).(\(_,_,tid)->getTrainByID ts tid)) r
           avl   = map (\(t,m)->t-m) $ zip total min
           group = map ((\(_,seats)->length seats).(\(m,f)->getBiggestGroup m f)) $ zip min free
+
+printMinMax :: ReservationData -> [String] -> IO()
+printMinMax (ts,ss,cs,rs) input
+    | length input /= 2 = putStrLn "Invalid number of arguments"
+    | route == (-1,-1) = putStrLn "Invalid station IDs"
+    | routes == [[]] = putStrLn "No routes found"
+    | otherwise = do
+        printRoute ts ss cs input
+        putStrLn "Enter route number:"
+        chosen <- getLine
+        case (length.convertDec $ words chosen) of
+            0 -> putStrLn "Invalid route selected"
+            1 -> putStrLn $ printMinMax' (ts,ss,cs,rs) routes (head.convertDec $ words chosen)
+            _ -> putStrLn "Only one route can be selected"
+    where route  = convertFromTo input
+          routes = getRoutes ts cs (fst route) (snd route)
+
+printMinMax' :: ReservationData -> [[(From,To,TrainID)]] -> Int -> String
+printMinMax' _ _ 0 = "Invalid route selected"
+printMinMax' (ts,ss,cs,rs) routes i
+    | i <= (length routes) = (minS)
+    | otherwise            = "Invalid route selected"
+    where
+        r = map(\(f,t,tid)->(f,t,getTrainByID ts tid)) $ routes !! (i-1)
+        min = zip (map(\(f,t,(tid,Train n cs _ _))->(n,cs)) r) (map(map(\(cid,seats)->(cid,length seats))) $ map(getFreeSeatsSegment rs) r)
+        minS = init.unlines $ map(\((n,seats),s)->("Train '"++n++"':\n"++(init.unlines $ map(minS' seats) s))) min
+
+minS' :: [Car] -> (ID,Int) -> String
+minS' cars (cid,seats) = "\tCar #"++(show cid)++": min. "++(show seats)++" seat(s) free, max. "++(show(total-seats))++" seat(s) reserved"
+    where (Car _ _ total) = head $ filter((\(Car id _ _)-> id == cid)) cars
 
 printReservation :: ReservationData -> [String] -> IO()
 printReservation (ts,ss,cs,rs) input
@@ -306,6 +337,17 @@ reservationPossible' res (f,t) ri s
 
 filterRes :: Reservations -> ID -> [(TrainID,[Reservation])]
 filterRes rs rid = map(\(tid,res) -> (tid,filter(\(Reservation id _ _ _ _)->id == rid) res)) $ Map.toAscList rs
+
+splitRoute :: (From,To,(TrainID,Train)) -> [(From,To,(TrainID,Train))]
+splitRoute (f,t,(tid,tr))
+    | length filtered == 2 = [(f,t,(tid,tr))]
+    | null filtered = []
+    | null is = []
+    | null ss = []
+    | otherwise = [(filtered!!i,filtered!!(i+1),(tid,tr)) | i <- is]
+    where (Train _ _ ss _) = tr
+          filtered = (takeWhile(\x->x/=t) $ dropWhile(\x->x/=f) ss)++[t]
+          is = [0..((length filtered)-2)]
 
 
 -- convert input Strings to Int, returns [] if any input cannot be parsed

@@ -75,7 +75,7 @@ Einfache Ausgaben:
 ==================
 "Error": 69 0$114 1$ 114 2$ 111 3$ 114 4$
 "Prim": (80 0$ 114 1$ 105 2$ 109 3$)@
-"Nicht Prim": (78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@
+"Nicht Prim": (78 0$ 105 1$ 99 2$ 104 3$ 116 4$ 32 5$ 80 6$ 114 7$ 105 8$ 109 9$)@	
 
 
 Prinzip:
@@ -89,33 +89,13 @@ Ausgabe eines Strings in Klammer:
 Anfangsbedingung: 
 Stack: auzugebender String
 
-while ( != -1)
-	duplicate string
-	ersetze oberstes element (string) durch ASCII-Zeichen an index-Stelle
-	Gib oberstes element aus an index-Stelle
-	
-(String) ?????
+Eingabe:
+(Sieben Geislein stehen auf der Wiese und aesen vor sich hin...) 
+0(3!3!?(2!1~=)@(2#2#)(3!$1+ 4!@)(4!5#2+#@)@)4!4!6#5#4!@
 
-1!
-
-(Error)0?$
-
-(ab)
-(ab)(ab)
-(ab)xx
-(abc)0?0$(bc)0?0$(c)0?0$
-
-A: (3!3!1- 2!1=()5!C@3#*)
-
-(3!3!
+Wobei (Sieben...) am Stack ist und die zweite Zeile die eigentliche formel darstellt
 
 
-(String)0?0$
-(String)0?-1=0$
-
-x?-1=
-
-(String)n?-1=()(n$)
 
 
 
@@ -223,12 +203,9 @@ Test a2<1000
 T: 2!1000<()(3!4!+)(4!5#2+#@)
 F: ()
 
+1 2 (2!1000<(3!3!+)()(4!5#2+#@)@)4!5#4!5#4!@5!6#
 
-(2!1000<(3!3!+)()(4!5#2+#@)@)4!5#4!5#4!@3#
-
-
-
-
+4!5#4!5#4!@5!6#
+(String)
 
 
-3!4#3!4#
