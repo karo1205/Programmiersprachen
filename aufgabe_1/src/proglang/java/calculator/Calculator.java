@@ -100,17 +100,6 @@ class Calculator implements ActionListener
 	}
 	
 	/**
-	 * Reads each line from the input field and runs it
-	 */
-	private void runInputField() {
-		String text = cGui.getFormulaText();
-		String[] lines = text.split("\n");
-		for (int i = 0; i<lines.length; i++) {
-			run(lines[i]);
-		}
-	}
-	
-	/**
 	 * 
 	 * Prints the internals of the calculator, that is, stack and input list to stdout.
 	 * The output is in the same form as in the Aufgabe-sheet
@@ -145,11 +134,8 @@ class Calculator implements ActionListener
 
 	public void keyPressed(KeyEvent ev, String completeInput) {
 		char key = ev.getKeyChar();
-		System.out.println("key pressed: '"+key+"'");
-		if(Character.isISOControl(key)) {
-			System.out.println("Meta-Key ignored");
-		} else {
-			if(mode == mode.NORMAL ) {
+		if(!Character.isISOControl(key)) {
+			if(mode == ModeType.NORMAL ) {
 				if(Character.isDigit(key)) {
 					inputBuffer+=key;
 				} else if(key=='(') {
@@ -180,7 +166,7 @@ class Calculator implements ActionListener
 				} else if(key=='"') {
 					run(inputBuffer);
 					resetInputBuffer();
-					mode = mode.CONT;
+					mode = ModeType.CONT;
 					cGui.switchMode();
 				} else {
 					run(inputBuffer+key);
@@ -188,16 +174,17 @@ class Calculator implements ActionListener
 				}
 			} else {
 				if(key=='\'') {
-					run("("+completeInput+")");
-					mode = mode.NORMAL;
+					if(completeInput.length()>0)
+						run("("+completeInput+")");					
+					mode = ModeType.NORMAL;
 					cGui.switchMode();
 				}
 			}
 		}
 		if(ev.getKeyCode()==KeyEvent.VK_ENTER) {
-			run("("+completeInput+")");
+			if(completeInput.length()>0)
+				run("("+completeInput+")");
 		}
-		System.out.println("inputbuffer: '"+inputBuffer+"'");
 	}
 
 	public ModeType getMode() {
