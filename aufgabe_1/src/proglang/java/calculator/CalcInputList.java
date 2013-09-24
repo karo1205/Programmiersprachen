@@ -29,31 +29,26 @@ public class CalcInputList implements ICalcInputList {
 	 * 
 	 */
 	@Override
-	public String getNextElement() {
-		try {
-			
-			if (list == null || list.length() == 0)
-				return "";
-			
-			char nextChar = ' ';
-	
-			// read over trailing whitespaces
-			while ((isWhiteSpace(nextChar)) && list.length() > 0) {
-				nextChar = getNextChar();
-			}
-			
-			if (nextChar == '(')
-				return handleOpenBrace();
-			if (isDigit(nextChar))
-				return handleDigit(nextChar);
-			if (((int)nextChar == intPlus) ||  ((int)nextChar == intMinus))
-				return handleDigit(nextChar);
-			
-			return Character.toString(nextChar).trim();
-		} catch (CalcParseException e) {
-			// hmmm... what to do?
-			return ("");
+	public String getNextElement() throws CalcParseException {
+		
+		if (list == null || list.length() == 0)
+			return "";
+		
+		char nextChar = ' ';
+
+		// read over trailing whitespaces
+		while ((isWhiteSpace(nextChar)) && list.length() > 0) {
+			nextChar = getNextChar();
 		}
+		
+		if (nextChar == '(')
+			return handleOpenBrace();
+		if (isDigit(nextChar))
+			return handleDigit(nextChar);
+		if (((int)nextChar == intPlus) ||  ((int)nextChar == intMinus))
+			return handleDigit(nextChar);
+		
+		return Character.toString(nextChar).trim();
 	}
 
 	boolean isWhiteSpace(char toCheck) {

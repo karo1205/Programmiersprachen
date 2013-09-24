@@ -1,5 +1,7 @@
 package proglang.java.calculator;
 
+import proglang.java.calculator.exception.CalcParseException;
+
 /**
  * ICalcInput List
  * Interface for the Input List-implementation of the Calculator<br>
@@ -17,7 +19,7 @@ public interface ICalcInputList {
 	 * Gets the next element from the input list. 
 	 * @return next element
 	 */
-	String getNextElement();
+	String getNextElement() throws CalcParseException;
 
 	/**
 	 * pushes the given element to the first place of the input list
