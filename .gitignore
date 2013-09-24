@@ -11,3 +11,7 @@ reservations
 
 # Common #
 *~
+bin/*
+.gitignore
+.classpath
+.project
