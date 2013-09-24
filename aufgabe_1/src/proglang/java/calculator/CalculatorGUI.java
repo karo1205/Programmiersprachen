@@ -89,7 +89,7 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		formulaArea.setRows(8);
 		formulaArea.setColumns(64);
 		formulaArea.setToolTipText("Insert your formula here...");
-		formulaArea.setLineWrap(true);
+		//formulaArea.setLineWrap(true);
 		formulaArea.addKeyListener(keyListener);
 		formulaArea.setEditable(false);
 
@@ -105,10 +105,15 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		this.setTitle("Calculator 0.1");
 	}
 
-	protected void parseKeyStroke(KeyEvent ev) {
-		calc.keyPressed(ev,formulaArea.getText());
-		if(ev.getKeyCode()==KeyEvent.VK_ENTER)
+	protected void parseKeyStroke(KeyEvent ev){
+		if(calc.getMode()==ModeType.NORMAL) {
 			formulaArea.setText(null);
+			formulaArea.repaint();
+		}
+		calc.keyPressed(ev,formulaArea.getText().replace('\n',' ').trim());
+		if(ev.getKeyCode()==KeyEvent.VK_ENTER) {
+			formulaArea.setText(null);
+		}
 	}
 
 	public String getFormulaText() {
@@ -158,16 +163,16 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 				characterMap[r][c].setText(emptyFieldString); 
 			}
 		}
-//		formulaArea.setText("");
+		formulaArea.setText(null);
+		formulaArea.setEditable(false);
 		setFocus();
 	}
 
 	public void switchMode() {
-		if(calc.getMode() == ModeType.NORMAL) {
-			formulaArea.setText(null);
+		formulaArea.setText(null);
+		if(calc.getMode()==ModeType.NORMAL)
 			formulaArea.setEditable(false);
-		} else {
+		else
 			formulaArea.setEditable(true);
-		}
 	}
 }
