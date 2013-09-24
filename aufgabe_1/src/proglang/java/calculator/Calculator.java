@@ -76,6 +76,7 @@ class Calculator implements ActionListener
 	 */
 	private void run(String toCompute) {
 		try {
+			toCompute=toCompute.replace("\"",  "");
 			context.getInputList().pushElement(toCompute);
 			// And then run trough them
 			printCalcIntern();
