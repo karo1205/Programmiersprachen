@@ -28,7 +28,7 @@ public class ReadOperator implements ICalcOperator {
 		setElements(calcContext);
 		// no exception so far? Lets really operate
 		
-		if (bracedExp.length() < (index + 1)) {
+		if (CalcUtil.getUnbracedExpression(bracedExp).length() < (index + 1)) {
 			// out of range, just push -1
 			stack.push("-1");
 		} else {
