@@ -175,15 +175,9 @@ class Calculator implements ActionListener
 				}
 			} else {
 				if(key=='\'') {
-<<<<<<< HEAD
-					completeInput = completeInput.replace("\"", "");	// remove the "
-					run("("+completeInput+")");
-					mode = mode.NORMAL;
-=======
 					if(completeInput.length()>0)
 						run("("+completeInput+")");					
 					mode = ModeType.NORMAL;
->>>>>>> 665c246c879506da31259334348d5c47b7dc5e96
 					cGui.switchMode();
 				}
 			}
