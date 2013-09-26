@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JLabel;
-import javax.swing.border.EtchedBorder;
 
 /**
  * Implements one digit of the output display 

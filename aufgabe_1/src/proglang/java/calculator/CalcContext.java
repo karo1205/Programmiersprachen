@@ -4,7 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import proglang.java.calculator.exception.CalcException;
-import proglang.java.calculator.operator.*;
+import proglang.java.calculator.operator.AndOperator;
+import proglang.java.calculator.operator.ApplyOperator;
+import proglang.java.calculator.operator.BiggerThanOperator;
+import proglang.java.calculator.operator.CopyOperator;
+import proglang.java.calculator.operator.DeleteOperator;
+import proglang.java.calculator.operator.DivOperator;
+import proglang.java.calculator.operator.EqualsOperator;
+import proglang.java.calculator.operator.ExtendOperator;
+import proglang.java.calculator.operator.ICalcOperator;
+import proglang.java.calculator.operator.MinusOperator;
+import proglang.java.calculator.operator.ModOperator;
+import proglang.java.calculator.operator.MultiplyOperator;
+import proglang.java.calculator.operator.NegationOperator;
+import proglang.java.calculator.operator.OrOperator;
+import proglang.java.calculator.operator.OutputOperator;
+import proglang.java.calculator.operator.PlusOperator;
+import proglang.java.calculator.operator.ReadOperator;
+import proglang.java.calculator.operator.SmallerThanOperator;
 
 /**
  * The context stores references to all relevant data, that is, stack, list and display. The context is passed a sa paramter

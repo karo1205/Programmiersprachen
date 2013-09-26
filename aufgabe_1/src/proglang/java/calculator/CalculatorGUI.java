@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +18,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
+import proglang.java.calculator.Calculator.ModeType;
 import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
 
 @SuppressWarnings("serial")
@@ -29,8 +30,9 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 	private JTextArea formulaArea ;
 	private JLabel lblErrorMessage;
 	int rowCount, colCount;
+	Calculator calc;
 	
-	public CalculatorGUI(ActionListener al) {
+	public CalculatorGUI(Calculator calc) {
 
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
@@ -38,12 +40,35 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		borderLayout.setHgap(10);
 		borderLayout.setVgap(10);
 		getContentPane().setLayout(borderLayout);
-		
+
+		this.calc = calc;
+
 		displayPanel = new JPanel();
 		getContentPane().add(displayPanel, BorderLayout.NORTH);
 		displayPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		displayPanel.setBackground(Color.BLACK);
-						
+
+		KeyListener keyListener = new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				parseKeyStroke(arg0);
+			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				if(arg0.getKeyCode()==KeyEvent.VK_ENTER) {
+					parseKeyStroke(arg0);
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+
 		JPanel inputPanel = new JPanel();
 		getContentPane().add(inputPanel, BorderLayout.CENTER);
 		inputPanel.setLayout(new BorderLayout(5, 5));
@@ -52,28 +77,23 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		inputPanel.add(buttonPanel,  BorderLayout.EAST);
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		
-		JButton btnEnter = new JButton("Enter");
-		btnEnter.setMnemonic('E');
-		btnEnter.setActionCommand("enter");
-		btnEnter.setToolTipText("Lets compute it");
-		buttonPanel.add(btnEnter);
-		btnEnter.addActionListener(al);
-		
 		JButton btnClear = new JButton("Clear");
 		btnClear.setMnemonic('C');
 
 		btnClear.setActionCommand("clear");
 		btnClear.setToolTipText("Clear everything");
 		buttonPanel.add(btnClear);
-		btnClear.addActionListener(al);
+		btnClear.addActionListener(calc);
 		
 		formulaArea = new JTextArea();
 		formulaArea.setRows(8);
 		formulaArea.setColumns(64);
 		formulaArea.setToolTipText("Insert your formula here...");
-		formulaArea.setLineWrap(true);
+		//formulaArea.setLineWrap(true);
+		formulaArea.addKeyListener(keyListener);
+		formulaArea.setEditable(false);
 
-		JScrollPane scrollPane = new JScrollPane(formulaArea);
+        JScrollPane scrollPane = new JScrollPane(formulaArea);
 		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		inputPanel.add(scrollPane);
 		scrollPane.setPreferredSize(new Dimension (800, 250));
@@ -83,6 +103,17 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 		this.pack();
 		this.setResizable(false);
 		this.setTitle("Calculator 0.1");
+	}
+
+	protected void parseKeyStroke(KeyEvent ev){
+		if(calc.getMode()==ModeType.NORMAL) {
+			formulaArea.setText(null);
+			formulaArea.repaint();
+		}
+		calc.keyPressed(ev,formulaArea.getText().replace('\n',' ').trim());
+		if(ev.getKeyCode()==KeyEvent.VK_ENTER) {
+			formulaArea.setText(null);
+		}
 	}
 
 	public String getFormulaText() {
@@ -132,7 +163,16 @@ public class CalculatorGUI extends JFrame implements ICalcDisplayGUI  {
 				characterMap[r][c].setText(emptyFieldString); 
 			}
 		}
-//		formulaArea.setText("");
+		formulaArea.setText(null);
+		formulaArea.setEditable(false);
 		setFocus();
+	}
+
+	public void switchMode() {
+		formulaArea.setText(null);
+		if(calc.getMode()==ModeType.NORMAL)
+			formulaArea.setEditable(false);
+		else
+			formulaArea.setEditable(true);
 	}
 }

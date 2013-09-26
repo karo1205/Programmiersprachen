@@ -1,10 +1,10 @@
 package proglang.java.calculator;
 
-import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
-import proglang.java.calculator.exception.CalcStackEmptyException;
-
 import java.util.Iterator;
 import java.util.Stack;
+
+import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
+import proglang.java.calculator.exception.CalcStackEmptyException;
 
 public class CalcStack implements ICalcStack {
 

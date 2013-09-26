@@ -12,8 +12,6 @@ import proglang.java.calculator.exception.CalcParseException;
 
 public class CalcInputList implements ICalcInputList {
 	private String list;
-	private static int intMinus = (int)'-';
-	private static int intPlus = (int)'+';
 	
 	public CalcInputList () {
 		list = new String();
@@ -84,7 +82,7 @@ public class CalcInputList implements ICalcInputList {
 		String toReturn = Character.toString(firstDigit);
 		try {
 			char nextChar = getNextChar();
-			while (isDigit(nextChar)) {
+			while (Character.isDigit(nextChar)) {
 				toReturn = toReturn.concat(Character.toString(nextChar));
 				nextChar = getNextChar();
 			}
@@ -135,10 +133,6 @@ public class CalcInputList implements ICalcInputList {
 		return nextChar;
 	}
 	
-	private boolean isDigit(char d) {
-		return 	(d <= '9') &&  (d >= '0');
-	}
-
 	public String toString() {
 		return list;
 	}

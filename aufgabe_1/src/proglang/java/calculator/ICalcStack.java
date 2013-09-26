@@ -1,5 +1,6 @@
 package proglang.java.calculator;
-import proglang.java.calculator.exception.*;
+import proglang.java.calculator.exception.CalcIndexOutOfRangeException;
+import proglang.java.calculator.exception.CalcStackEmptyException;
 
 /**
  * Interface for the Stack-implementation of the Calculator<br>

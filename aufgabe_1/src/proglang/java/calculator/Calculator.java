@@ -1,6 +1,7 @@
 package proglang.java.calculator;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Main Class
@@ -19,6 +20,10 @@ class Calculator implements ActionListener
 	private ICalcContext context = null;
 	private CalculatorGUI cGui;
 	private final String defaultMessage = "Enter formula and press Enter";
+	private String inputBuffer;
+	enum ModeType { NORMAL, CONT };
+	ModeType mode;
+	private int openCount;
 
 	/**
 	 * Calculator main method.
@@ -58,7 +63,6 @@ class Calculator implements ActionListener
 	 * Initializes all data used by the calculator 
 	 */
 	private void initCalculator() {
-		
 		cGui = new CalculatorGUI(this);
 		context = new CalcContext(new CalcStack(), new CalcInputList(), new CalcDisplay(cGui, calcRows, calcCols));
 		cGui.setVisible(true);
@@ -72,6 +76,7 @@ class Calculator implements ActionListener
 	 */
 	private void run(String toCompute) {
 		try {
+			toCompute=toCompute.replace("\"",  "");
 			context.getInputList().pushElement(toCompute);
 			// And then run trough them
 			printCalcIntern();
@@ -96,17 +101,6 @@ class Calculator implements ActionListener
 	}
 	
 	/**
-	 * Reads each line from the input field and runs it
-	 */
-	private void runInputField() {
-		String text = cGui.getFormulaText();
-		String[] lines = text.split("\n");
-		for (int i = 0; i<lines.length; i++) {
-			run(lines[i]);
-		}
-	}
-	
-	/**
 	 * 
 	 * Prints the internals of the calculator, that is, stack and input list to stdout.
 	 * The output is in the same form as in the Aufgabe-sheet
@@ -123,14 +117,78 @@ class Calculator implements ActionListener
 		context.getInputList().clear();
 		cGui.clearAll();
 		cGui.setCommentLineText(defaultMessage);
+		this.mode = mode.NORMAL;
+		resetInputBuffer();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-        if ("enter".equals(e.getActionCommand())) {
-        	runInputField();
-        	cGui.setFocus();
-        } else {
+        if ("clear".equals(e.getActionCommand())) {
         	clearAll();
+        	cGui.setFocus();
         }
     }
+
+	private void resetInputBuffer() {
+		inputBuffer = "";
+		openCount = 0;
+	}
+
+	public void keyPressed(KeyEvent ev, String completeInput) {
+		char key = ev.getKeyChar();
+		if(!Character.isISOControl(key)) {
+			if(mode == ModeType.NORMAL ) {
+				if(Character.isDigit(key)) {
+					inputBuffer+=key;
+				} else if(key=='(') {
+					if(inputBuffer.startsWith("(")) {
+						inputBuffer+="(";
+					} else {
+						run(inputBuffer);
+						inputBuffer = "(";
+					}
+					openCount++;
+				} else if(key==')') {
+					switch(openCount) {
+						case 0:
+							run(inputBuffer);
+							run(")");
+							resetInputBuffer();
+							break;
+						case 1:
+							run(inputBuffer+")");
+							resetInputBuffer();
+							break;
+						default:
+							inputBuffer+=")";
+								openCount--;
+					}
+				} else if (openCount > 0) {
+					inputBuffer += key;
+				} else if(key=='"') {
+					run(inputBuffer);
+					resetInputBuffer();
+					mode = ModeType.CONT;
+					cGui.switchMode();
+				} else {
+					run(inputBuffer+key);
+					resetInputBuffer();
+				}
+			} else {
+				if(key=='\'') {
+					if(completeInput.length()>0)
+						run("("+completeInput+")");					
+					mode = ModeType.NORMAL;
+					cGui.switchMode();
+				}
+			}
+		}
+		if(ev.getKeyCode()==KeyEvent.VK_ENTER) {
+			if(completeInput.length()>0)
+				run("("+completeInput+")");
+		}
+	}
+
+	public ModeType getMode() {
+		return mode;
+	}
 }
