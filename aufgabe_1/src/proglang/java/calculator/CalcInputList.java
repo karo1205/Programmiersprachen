@@ -12,6 +12,8 @@ import proglang.java.calculator.exception.CalcParseException;
 
 public class CalcInputList implements ICalcInputList {
 	private String list;
+	private static int intMinus = (int)'-';
+	private static int intPlus = (int)'+'; 
 	
 	public CalcInputList () {
 		list = new String();
@@ -41,7 +43,7 @@ public class CalcInputList implements ICalcInputList {
 		
 		if (nextChar == '(')
 			return handleOpenBrace();
-		if (isDigit(nextChar))
+		if (Character.isDigit(nextChar))
 			return handleDigit(nextChar);
 		if (((int)nextChar == intPlus) ||  ((int)nextChar == intMinus))
 			return handleDigit(nextChar);
